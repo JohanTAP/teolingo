@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../models/hebrew_letter.dart';
 import '../providers/game_provider.dart';
+import '../providers/language_provider.dart';
 
 class OptionButton extends StatelessWidget {
-  final HebrewLetter option;
+  final dynamic option;
   final int index;
   final bool isSelected;
   final bool isCorrect;
@@ -11,6 +11,7 @@ class OptionButton extends StatelessWidget {
   final bool isSmallScreen;
   final VoidCallback onTap;
   final GameLevel? currentLevel;
+  final LanguageType languageType;
 
   const OptionButton({
     super.key,
@@ -22,6 +23,7 @@ class OptionButton extends StatelessWidget {
     this.isSmallScreen = false,
     required this.onTap,
     this.currentLevel,
+    required this.languageType,
   });
 
   @override
@@ -79,6 +81,7 @@ class OptionButton extends StatelessWidget {
                 child: Text(
                   displayText,
                   style: TextStyle(
+                    fontFamily: 'Times New Roman',
                     color: textColor,
                     fontSize:
                         (currentLevel == GameLevel.level4 ||

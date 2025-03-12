@@ -1,8 +1,10 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import '../models/hebrew_letter.dart';
+import '../models/greek_letter.dart';
 import '../services/subscription_service.dart';
 import '../utils/key_generator.dart';
+import 'language_provider.dart';
 
 enum GameLevel {
   level1, // Orden normal (de principio a fin)
@@ -21,7 +23,7 @@ class GameProvider with ChangeNotifier {
   bool _isAnswered = false;
   int? _selectedOptionIndex;
   int? _correctOptionIndex;
-  List<HebrewLetter> _options = [];
+  List<dynamic> _options = [];
   bool _gameCompleted = false;
   List<int> _completedLetters = [];
   GameLevel _currentLevel = GameLevel.level1;
@@ -29,25 +31,9 @@ class GameProvider with ChangeNotifier {
   final SubscriptionService _subscriptionService = SubscriptionService();
   bool _isSubscriptionChecked = false;
   int _maxUnlockedLevel = 1;
+  LanguageType _currentLanguage = LanguageType.hebrew;
 
-  // Getters
-  int get currentIndex => _currentIndex;
-  int get score => _score;
-  int get streak => _streak;
-  bool get isAnswered => _isAnswered;
-  int? get selectedOptionIndex => _selectedOptionIndex;
-  int? get correctOptionIndex => _correctOptionIndex;
-  List<HebrewLetter> get options => _options;
-  bool get gameCompleted => _gameCompleted;
-  List<int> get completedLetters => _completedLetters;
-  GameLevel get currentLevel => _currentLevel;
-  int get maxUnlockedLevel => _maxUnlockedLevel;
-
-  HebrewLetter get currentLetter {
-    final int letterIndex = _levelSequence[_currentIndex];
-    return HebrewLettersData.letters[letterIndex];
-  }
-
+  // Constructor
   GameProvider() {
     _initializeGame();
   }
@@ -56,7 +42,7 @@ class GameProvider with ChangeNotifier {
     try {
       debugPrint('Inicializando juego...');
       await _checkSubscription();
-      _setLevelSequence();
+      _setupLevelSequence();
       _generateOptions();
       debugPrint('Juego inicializado correctamente');
     } catch (e) {
@@ -64,42 +50,64 @@ class GameProvider with ChangeNotifier {
     }
   }
 
-  Future<void> _checkSubscription() async {
-    try {
-      if (_isSubscriptionChecked) {
-        debugPrint(
-          'Suscripción ya verificada, nivel actual: $_maxUnlockedLevel',
-        );
-        return;
-      }
+  // Getters
+  int get currentIndex => _currentIndex;
+  int get score => _score;
+  int get streak => _streak;
+  bool get isAnswered => _isAnswered;
+  int? get selectedOptionIndex => _selectedOptionIndex;
+  int? get correctOptionIndex => _correctOptionIndex;
+  List<dynamic> get options => _options;
+  bool get gameCompleted => _gameCompleted;
+  List<int> get completedLetters => _completedLetters;
+  GameLevel get currentLevel => _currentLevel;
+  int get maxUnlockedLevel => _maxUnlockedLevel;
+  LanguageType get currentLanguage => _currentLanguage;
 
-      debugPrint('Verificando nivel desbloqueado...');
-      final int previousLevel = _maxUnlockedLevel;
-      _maxUnlockedLevel = await _subscriptionService.getUnlockedLevel();
-      debugPrint(
-        'Nivel máximo desbloqueado: $_maxUnlockedLevel (anterior: $previousLevel)',
-      );
-
-      // Si el nivel ha cambiado, notificar a los listeners
-      if (_maxUnlockedLevel != previousLevel) {
-        debugPrint('El nivel ha cambiado, notificando a los listeners');
-        notifyListeners();
-      }
-
-      _isSubscriptionChecked = true;
-    } catch (e) {
-      debugPrint('Error al verificar suscripción: $e');
-      // En caso de error, asumimos que solo el nivel 1 está desbloqueado
-      _maxUnlockedLevel = 1;
-      _isSubscriptionChecked = true;
-      notifyListeners();
-    }
+  // Getter para obtener la letra actual según el idioma
+  dynamic get currentLetter {
+    final int letterIndex = _levelSequence[_currentIndex];
+    return _currentLanguage == LanguageType.hebrew
+        ? HebrewLettersData.letters[letterIndex]
+        : GreekLettersData.letters[letterIndex];
   }
 
-  void _setLevelSequence() {
+  // Método para establecer el idioma actual
+  void setLanguage(LanguageType language) {
+    if (_currentLanguage == language) return;
+    _currentLanguage = language;
+    // Reiniciar el juego con el nuevo idioma
+    startGame(_currentLevel);
+    notifyListeners();
+  }
+
+  // Método para obtener el total de letras según el idioma
+  int get totalLetters =>
+      _currentLanguage == LanguageType.hebrew
+          ? HebrewLettersData.letters.length
+          : GreekLettersData.letters.length;
+
+  // Iniciar el juego con un nivel específico
+  void startGame(GameLevel level) {
+    _currentLevel = level;
+    _score = 0;
+    _streak = 0;
+    _isAnswered = false;
+    _selectedOptionIndex = null;
+    _correctOptionIndex = null;
+    _gameCompleted = false;
+    _completedLetters = [];
+
+    _setupLevelSequence();
+    _generateOptions();
+
+    notifyListeners();
+  }
+
+  // Configurar la secuencia de letras según el nivel
+  void _setupLevelSequence() {
     try {
-      final int totalLetters = HebrewLettersData.letters.length;
-      debugPrint('Configurando secuencia para nivel: $_currentLevel');
+      final int totalLetters = this.totalLetters;
 
       switch (_currentLevel) {
         case GameLevel.level1:
@@ -165,7 +173,7 @@ class GameProvider with ChangeNotifier {
     } catch (e) {
       debugPrint('Error al configurar secuencia de nivel: $e');
       // En caso de error, usamos el nivel 1 (orden normal)
-      final int totalLetters = HebrewLettersData.letters.length;
+      final int totalLetters = this.totalLetters;
       _levelSequence = List.generate(totalLetters, (index) => index);
       _currentIndex = 0;
     }
@@ -177,28 +185,61 @@ class GameProvider with ChangeNotifier {
       _correctOptionIndex = random.nextInt(4);
       final int currentLetterIndex = _levelSequence[_currentIndex];
 
-      _options = List.generate(4, (index) {
-        if (index == _correctOptionIndex) {
-          return HebrewLettersData.letters[currentLetterIndex];
-        } else {
-          int randomIndex;
-          do {
-            randomIndex = random.nextInt(HebrewLettersData.letters.length);
-          } while (randomIndex == currentLetterIndex ||
-              _options.any(
-                (option) =>
-                    option.symbol ==
-                    HebrewLettersData.letters[randomIndex].symbol,
-              ));
+      if (_currentLanguage == LanguageType.hebrew) {
+        final letters = HebrewLettersData.letters;
+        List<HebrewLetter> hebrewOptions = [];
 
-          return HebrewLettersData.letters[randomIndex];
+        for (int i = 0; i < 4; i++) {
+          if (i == _correctOptionIndex) {
+            hebrewOptions.add(letters[currentLetterIndex]);
+          } else {
+            int randomIndex;
+            do {
+              randomIndex = random.nextInt(letters.length);
+            } while (randomIndex == currentLetterIndex ||
+                hebrewOptions.any(
+                  (option) => option.symbol == letters[randomIndex].symbol,
+                ));
+
+            hebrewOptions.add(letters[randomIndex]);
+          }
         }
-      });
+
+        _options = hebrewOptions;
+      } else {
+        final letters = GreekLettersData.letters;
+        List<GreekLetter> greekOptions = [];
+
+        for (int i = 0; i < 4; i++) {
+          if (i == _correctOptionIndex) {
+            greekOptions.add(letters[currentLetterIndex]);
+          } else {
+            int randomIndex;
+            do {
+              randomIndex = random.nextInt(letters.length);
+            } while (randomIndex == currentLetterIndex ||
+                greekOptions.any(
+                  (option) => option.symbol == letters[randomIndex].symbol,
+                ));
+
+            greekOptions.add(letters[randomIndex]);
+          }
+        }
+
+        _options = greekOptions;
+      }
     } catch (e) {
       debugPrint('Error al generar opciones: $e');
       // En caso de error, generamos opciones básicas
       _correctOptionIndex = 0;
-      _options = List.generate(4, (index) => HebrewLettersData.letters[index]);
+      if (_currentLanguage == LanguageType.hebrew) {
+        _options = List.generate(
+          4,
+          (index) => HebrewLettersData.letters[index],
+        );
+      } else {
+        _options = List.generate(4, (index) => GreekLettersData.letters[index]);
+      }
     }
   }
 
@@ -249,7 +290,7 @@ class GameProvider with ChangeNotifier {
     _selectedOptionIndex = null;
     _gameCompleted = false;
     _completedLetters = [];
-    _setLevelSequence();
+    _setupLevelSequence();
     _generateOptions();
     notifyListeners();
   }
@@ -324,5 +365,37 @@ class GameProvider with ChangeNotifier {
       'Verificando si nivel $levelNumber está desbloqueado: $isUnlocked',
     );
     return isUnlocked;
+  }
+
+  Future<void> _checkSubscription() async {
+    try {
+      if (_isSubscriptionChecked) {
+        debugPrint(
+          'Suscripción ya verificada, nivel actual: $_maxUnlockedLevel',
+        );
+        return;
+      }
+
+      debugPrint('Verificando nivel desbloqueado...');
+      final int previousLevel = _maxUnlockedLevel;
+      _maxUnlockedLevel = await _subscriptionService.getUnlockedLevel();
+      debugPrint(
+        'Nivel máximo desbloqueado: $_maxUnlockedLevel (anterior: $previousLevel)',
+      );
+
+      // Si el nivel ha cambiado, notificar a los listeners
+      if (_maxUnlockedLevel != previousLevel) {
+        debugPrint('El nivel ha cambiado, notificando a los listeners');
+        notifyListeners();
+      }
+
+      _isSubscriptionChecked = true;
+    } catch (e) {
+      debugPrint('Error al verificar suscripción: $e');
+      // En caso de error, asumimos que solo el nivel 1 está desbloqueado
+      _maxUnlockedLevel = 1;
+      _isSubscriptionChecked = true;
+      notifyListeners();
+    }
   }
 }

@@ -5,7 +5,8 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'providers/game_provider.dart';
-import 'screens/home_screen.dart';
+import 'providers/language_provider.dart';
+import 'screens/language_selection_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,23 +32,37 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (_, child) {
-        return ChangeNotifierProvider(
-          create: (context) => GameProvider(),
+        return MultiProvider(
+          providers: [
+            ChangeNotifierProvider(create: (context) => LanguageProvider()),
+            ChangeNotifierProxyProvider<LanguageProvider, GameProvider>(
+              create: (context) => GameProvider(),
+              update: (context, languageProvider, previousGameProvider) {
+                if (previousGameProvider != null) {
+                  previousGameProvider.setLanguage(languageProvider.currentLanguage);
+                  return previousGameProvider;
+                }
+                return GameProvider();
+              },
+            ),
+          ],
           child: MaterialApp(
             title: 'Teolingo',
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
               colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
               useMaterial3: true,
-              fontFamily: 'Roboto',
-              // Usar textTheme sin aplicar fontSizeFactor y fontSizeDelta
-              textTheme: Typography.material2018().black,
+              fontFamily: 'Times New Roman',
+              // Aplicar Times New Roman a todos los estilos de texto
+              textTheme: Typography.material2018().black.apply(
+                fontFamily: 'Times New Roman',
+              ),
             ),
             home: child,
           ),
         );
       },
-      child: const HomeScreen(),
+      child: const LanguageSelectionScreen(),
     );
   }
 }

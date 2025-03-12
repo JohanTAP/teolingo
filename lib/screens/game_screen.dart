@@ -238,6 +238,8 @@ class GameScreen extends StatelessWidget {
                                                 gameProvider.correctOptionIndex,
                                         isSmallScreen: isSmallScreen,
                                         currentLevel: gameProvider.currentLevel,
+                                        languageType:
+                                            gameProvider.currentLanguage,
                                         onTap: () {
                                           if (!gameProvider.isAnswered) {
                                             gameProvider.selectOption(index);
@@ -324,7 +326,7 @@ class GameScreen extends StatelessWidget {
     final bool isLargeScreen = screenSize.width > 600;
 
     // Calcular el porcentaje de aciertos
-    final int totalLetters = 22;
+    final int totalLetters = gameProvider.totalLetters;
     final int correctAnswers = gameProvider.completedLetters.length;
     final double percentage = (correctAnswers / totalLetters) * 100;
 
