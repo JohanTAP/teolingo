@@ -376,7 +376,6 @@ class SubscriptionService {
   Future<List<Map<String, dynamic>>> _getAllSubscriptionsWithPrefs() async {
     final prefs = await SharedPreferences.getInstance();
     final List<String> keys = prefs.getStringList(_keysListKey) ?? [];
-    final int unlockedLevel = prefs.getInt(_unlockedLevelKey) ?? 1;
     final String deviceId = await _getDeviceId();
     final now = DateTime.now();
     
