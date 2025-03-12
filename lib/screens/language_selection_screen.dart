@@ -58,7 +58,7 @@ class LanguageSelectionScreen extends StatelessWidget {
                         horizontal: 16,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withAlpha(25),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Text(
@@ -117,18 +117,21 @@ class LanguageSelectionScreen extends StatelessWidget {
   ) {
     // Calcular el ancho del botón basado en el tamaño de la pantalla
     final screenWidth = MediaQuery.of(context).size.width;
-    final buttonWidth = isLargeScreen 
-        ? screenWidth * 0.6 
-        : (isSmallScreen ? screenWidth * 0.85 : screenWidth * 0.75);
-    
-    return Container(
+    final buttonWidth =
+        isLargeScreen
+            ? screenWidth * 0.6
+            : (isSmallScreen ? screenWidth * 0.85 : screenWidth * 0.75);
+
+    return SizedBox(
       width: buttonWidth,
       child: ElevatedButton(
         onPressed: () {
           // Establecer el idioma seleccionado
-          Provider.of<LanguageProvider>(context, listen: false)
-              .setLanguage(language);
-          
+          Provider.of<LanguageProvider>(
+            context,
+            listen: false,
+          ).setLanguage(language);
+
           // Navegar a la pantalla principal
           Navigator.pushReplacement(
             context,
@@ -148,11 +151,7 @@ class LanguageSelectionScreen extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(
-              icon,
-              color: Colors.white,
-              size: isSmallScreen ? 30 : 40,
-            ),
+            Icon(icon, color: Colors.white, size: isSmallScreen ? 30 : 40),
             SizedBox(width: isSmallScreen ? 15 : 20),
             Expanded(
               child: Column(
@@ -172,17 +171,14 @@ class LanguageSelectionScreen extends StatelessWidget {
                     description,
                     style: TextStyle(
                       fontSize: isSmallScreen ? 14 : 16,
-                      color: Colors.white.withOpacity(0.9),
+                      color: Colors.white.withAlpha(25),
                       fontFamily: 'Times New Roman',
                     ),
                   ),
                 ],
               ),
             ),
-            const Icon(
-              Icons.arrow_forward_ios,
-              color: Colors.white,
-            ),
+            const Icon(Icons.arrow_forward_ios, color: Colors.white),
           ],
         ),
       ),
