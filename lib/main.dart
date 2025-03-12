@@ -9,7 +9,7 @@ import 'screens/home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Inicializar SQLite solo para plataformas de escritorio (no web)
   if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
     // Inicializar para desktop
@@ -17,7 +17,7 @@ void main() async {
     databaseFactory = databaseFactoryFfi;
     debugPrint('SQLite inicializado para desktop');
   }
-  
+
   runApp(const MyApp());
 }
 

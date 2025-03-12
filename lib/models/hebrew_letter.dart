@@ -171,4 +171,4 @@ class HebrewLettersData {
       audioPath: 'assets/audio/Alefbeto/22. Tau (ת).mp3',
     ),
   ];
-} 
+}

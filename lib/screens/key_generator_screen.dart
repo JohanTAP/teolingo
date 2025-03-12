@@ -37,7 +37,7 @@ class _KeyGeneratorScreenState extends State<KeyGeneratorScreen> {
 
   void _validateAccessKey() {
     if (_isBlocked) return;
-    
+
     final key = _specialKeyController.text.trim();
     setState(() {
       if (key.isEmpty) {
@@ -53,7 +53,8 @@ class _KeyGeneratorScreenState extends State<KeyGeneratorScreen> {
           _specialKeyError = 'Demasiados intentos fallidos. Acceso bloqueado.';
           _isBlocked = true;
         } else {
-          _specialKeyError = 'Clave incorrecta. Intentos restantes: $_remainingAttempts';
+          _specialKeyError =
+              'Clave incorrecta. Intentos restantes: $_remainingAttempts';
         }
         _specialKeySuccess = null;
       }
@@ -83,16 +84,16 @@ class _KeyGeneratorScreenState extends State<KeyGeneratorScreen> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              Colors.blue.shade700,
-              Colors.indigo.shade900,
-            ],
+            colors: [Colors.blue.shade700, Colors.indigo.shade900],
           ),
         ),
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: _isAuthenticated ? _buildKeyGeneratorContent() : _buildAuthenticationScreen(),
+            child:
+                _isAuthenticated
+                    ? _buildKeyGeneratorContent()
+                    : _buildAuthenticationScreen(),
           ),
         ),
       ),
@@ -131,9 +132,7 @@ class _KeyGeneratorScreenState extends State<KeyGeneratorScreen> {
                     const SizedBox(height: 8),
                     const Text(
                       'Esta sección requiere una clave de acceso especial.',
-                      style: TextStyle(
-                        fontSize: 16,
-                      ),
+                      style: TextStyle(fontSize: 16),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 24),
@@ -198,10 +197,7 @@ class _KeyGeneratorScreenState extends State<KeyGeneratorScreen> {
               children: [
                 const Text(
                   'Configuración',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 16),
                 Row(
@@ -211,30 +207,12 @@ class _KeyGeneratorScreenState extends State<KeyGeneratorScreen> {
                     DropdownButton<int>(
                       value: _selectedLevel,
                       items: const [
-                        DropdownMenuItem(
-                          value: 2,
-                          child: Text('Nivel 2'),
-                        ),
-                        DropdownMenuItem(
-                          value: 3,
-                          child: Text('Nivel 3'),
-                        ),
-                        DropdownMenuItem(
-                          value: 4,
-                          child: Text('Nivel 4'),
-                        ),
-                        DropdownMenuItem(
-                          value: 5,
-                          child: Text('Nivel 5'),
-                        ),
-                        DropdownMenuItem(
-                          value: 6,
-                          child: Text('Nivel 6'),
-                        ),
-                        DropdownMenuItem(
-                          value: 7,
-                          child: Text('Nivel 7'),
-                        ),
+                        DropdownMenuItem(value: 2, child: Text('Nivel 2')),
+                        DropdownMenuItem(value: 3, child: Text('Nivel 3')),
+                        DropdownMenuItem(value: 4, child: Text('Nivel 4')),
+                        DropdownMenuItem(value: 5, child: Text('Nivel 5')),
+                        DropdownMenuItem(value: 6, child: Text('Nivel 6')),
+                        DropdownMenuItem(value: 7, child: Text('Nivel 7')),
                       ],
                       onChanged: (value) {
                         if (value != null) {
@@ -254,22 +232,10 @@ class _KeyGeneratorScreenState extends State<KeyGeneratorScreen> {
                     DropdownButton<int>(
                       value: _keyCount,
                       items: const [
-                        DropdownMenuItem(
-                          value: 1,
-                          child: Text('1 clave'),
-                        ),
-                        DropdownMenuItem(
-                          value: 5,
-                          child: Text('5 claves'),
-                        ),
-                        DropdownMenuItem(
-                          value: 10,
-                          child: Text('10 claves'),
-                        ),
-                        DropdownMenuItem(
-                          value: 20,
-                          child: Text('20 claves'),
-                        ),
+                        DropdownMenuItem(value: 1, child: Text('1 clave')),
+                        DropdownMenuItem(value: 5, child: Text('5 claves')),
+                        DropdownMenuItem(value: 10, child: Text('10 claves')),
+                        DropdownMenuItem(value: 20, child: Text('20 claves')),
                       ],
                       onChanged: (value) {
                         if (value != null) {
@@ -311,35 +277,37 @@ class _KeyGeneratorScreenState extends State<KeyGeneratorScreen> {
         Expanded(
           child: Card(
             elevation: 4,
-            child: _generatedKeys.isEmpty
-                ? const Center(
-                    child: Text(
-                      'Genera claves para verlas aquí',
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontStyle: FontStyle.italic,
+            child:
+                _generatedKeys.isEmpty
+                    ? const Center(
+                      child: Text(
+                        'Genera claves para verlas aquí',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontStyle: FontStyle.italic,
+                        ),
                       ),
+                    )
+                    : ListView.separated(
+                      itemCount: _generatedKeys.length,
+                      separatorBuilder:
+                          (context, index) => const Divider(height: 1),
+                      itemBuilder: (context, index) {
+                        final key = _generatedKeys[index];
+                        return ListTile(
+                          title: Text(key),
+                          subtitle: Text(
+                            'Desbloquea hasta el nivel ${KeyGenerator.getLevelFromKey(key)}',
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.copy),
+                            onPressed: () => _copyToClipboard(key),
+                            tooltip: 'Copiar al portapapeles',
+                          ),
+                        );
+                      },
                     ),
-                  )
-                : ListView.separated(
-                    itemCount: _generatedKeys.length,
-                    separatorBuilder: (context, index) => const Divider(height: 1),
-                    itemBuilder: (context, index) {
-                      final key = _generatedKeys[index];
-                      return ListTile(
-                        title: Text(key),
-                        subtitle: Text(
-                          'Desbloquea hasta el nivel ${KeyGenerator.getLevelFromKey(key)}',
-                          style: const TextStyle(fontSize: 12),
-                        ),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.copy),
-                          onPressed: () => _copyToClipboard(key),
-                          tooltip: 'Copiar al portapapeles',
-                        ),
-                      );
-                    },
-                  ),
           ),
         ),
         if (_generatedKeys.isNotEmpty) ...[
@@ -360,4 +328,4 @@ class _KeyGeneratorScreenState extends State<KeyGeneratorScreen> {
       ],
     );
   }
-} 
+}

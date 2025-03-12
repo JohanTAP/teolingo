@@ -18,8 +18,8 @@ class ScoreDisplay extends StatelessWidget {
       children: [
         Container(
           padding: EdgeInsets.symmetric(
-            horizontal: isSmallScreen ? 8 : 12, 
-            vertical: isSmallScreen ? 6 : 8
+            horizontal: isSmallScreen ? 8 : 12,
+            vertical: isSmallScreen ? 6 : 8,
           ),
           decoration: BoxDecoration(
             color: Colors.amber,
@@ -48,8 +48,8 @@ class ScoreDisplay extends StatelessWidget {
         if (streak > 0)
           Container(
             padding: EdgeInsets.symmetric(
-              horizontal: isSmallScreen ? 8 : 12, 
-              vertical: isSmallScreen ? 6 : 8
+              horizontal: isSmallScreen ? 8 : 12,
+              vertical: isSmallScreen ? 6 : 8,
             ),
             decoration: BoxDecoration(
               color: Colors.orange,
@@ -77,4 +77,4 @@ class ScoreDisplay extends StatelessWidget {
       ],
     );
   }
-} 
+}

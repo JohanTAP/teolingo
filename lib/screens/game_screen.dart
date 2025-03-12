@@ -14,19 +14,17 @@ class GameScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Obtener el tamaño de la pantalla
     final Size screenSize = MediaQuery.of(context).size;
-    final bool isSmallScreen = screenSize.width < 360 || screenSize.height < 600;
+    final bool isSmallScreen =
+        screenSize.width < 360 || screenSize.height < 600;
     final bool isLargeScreen = screenSize.width > 600;
-    
+
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              Colors.blue.shade800,
-              Colors.indigo.shade900,
-            ],
+            colors: [Colors.blue.shade800, Colors.indigo.shade900],
           ),
         ),
         child: SafeArea(
@@ -35,7 +33,7 @@ class GameScreen extends StatelessWidget {
               if (gameProvider.gameCompleted) {
                 return _buildResultsScreen(context, gameProvider);
               }
-              
+
               return Column(
                 children: [
                   Padding(
@@ -82,11 +80,15 @@ class GameScreen extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  gameProvider.currentLevel == GameLevel.level4 || 
-                                  gameProvider.currentLevel == GameLevel.level5 || 
-                                  gameProvider.currentLevel == GameLevel.level6
-                                      ? '¿Cuál es el símbolo de esta letra?' 
-                                      : (gameProvider.currentLevel == GameLevel.level7
+                                  gameProvider.currentLevel ==
+                                              GameLevel.level4 ||
+                                          gameProvider.currentLevel ==
+                                              GameLevel.level5 ||
+                                          gameProvider.currentLevel ==
+                                              GameLevel.level6
+                                      ? '¿Cuál es el símbolo de esta letra?'
+                                      : (gameProvider.currentLevel ==
+                                              GameLevel.level7
                                           ? '¿Cuál es la transcripción de esta letra?'
                                           : '¿Cuál es el nombre de esta letra?'),
                                   style: TextStyle(
@@ -101,8 +103,14 @@ class GameScreen extends StatelessWidget {
                                   alignment: Alignment.bottomRight,
                                   children: [
                                     Container(
-                                      width: isSmallScreen ? 120 : (isLargeScreen ? 180 : 150),
-                                      height: isSmallScreen ? 120 : (isLargeScreen ? 180 : 150),
+                                      width:
+                                          isSmallScreen
+                                              ? 120
+                                              : (isLargeScreen ? 180 : 150),
+                                      height:
+                                          isSmallScreen
+                                              ? 120
+                                              : (isLargeScreen ? 180 : 150),
                                       decoration: BoxDecoration(
                                         color: Colors.white,
                                         borderRadius: BorderRadius.circular(20),
@@ -116,19 +124,41 @@ class GameScreen extends StatelessWidget {
                                       ),
                                       child: Center(
                                         child: Text(
-                                          gameProvider.currentLevel == GameLevel.level4 || 
-                                          gameProvider.currentLevel == GameLevel.level5 || 
-                                          gameProvider.currentLevel == GameLevel.level6
+                                          gameProvider.currentLevel ==
+                                                      GameLevel.level4 ||
+                                                  gameProvider.currentLevel ==
+                                                      GameLevel.level5 ||
+                                                  gameProvider.currentLevel ==
+                                                      GameLevel.level6
                                               ? gameProvider.currentLetter.name
-                                              : (gameProvider.currentLevel == GameLevel.level7
-                                                  ? gameProvider.currentLetter.symbol
-                                                  : gameProvider.currentLetter.symbol),
+                                              : (gameProvider.currentLevel ==
+                                                      GameLevel.level7
+                                                  ? gameProvider
+                                                      .currentLetter
+                                                      .symbol
+                                                  : gameProvider
+                                                      .currentLetter
+                                                      .symbol),
                                           style: TextStyle(
-                                            fontSize: (gameProvider.currentLevel == GameLevel.level4 || 
-                                                     gameProvider.currentLevel == GameLevel.level5 || 
-                                                     gameProvider.currentLevel == GameLevel.level6)
-                                                ? (isSmallScreen ? 30 : (isLargeScreen ? 50 : 40))
-                                                : (isSmallScreen ? 60 : (isLargeScreen ? 100 : 80)),
+                                            fontSize:
+                                                (gameProvider.currentLevel ==
+                                                            GameLevel.level4 ||
+                                                        gameProvider
+                                                                .currentLevel ==
+                                                            GameLevel.level5 ||
+                                                        gameProvider
+                                                                .currentLevel ==
+                                                            GameLevel.level6)
+                                                    ? (isSmallScreen
+                                                        ? 30
+                                                        : (isLargeScreen
+                                                            ? 50
+                                                            : 40))
+                                                    : (isSmallScreen
+                                                        ? 60
+                                                        : (isLargeScreen
+                                                            ? 100
+                                                            : 80)),
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
@@ -141,11 +171,15 @@ class GameScreen extends StatelessWidget {
                                         onTap: () {
                                           // Reproducir el audio de la letra
                                           AudioService().playAudio(
-                                            gameProvider.currentLetter.audioPath,
+                                            gameProvider
+                                                .currentLetter
+                                                .audioPath,
                                           );
                                         },
                                         child: Container(
-                                          padding: EdgeInsets.all(isSmallScreen ? 6 : 8),
+                                          padding: EdgeInsets.all(
+                                            isSmallScreen ? 6 : 8,
+                                          ),
                                           decoration: BoxDecoration(
                                             color: Colors.blue.shade700,
                                             shape: BoxShape.circle,
@@ -163,43 +197,76 @@ class GameScreen extends StatelessWidget {
                                 SizedBox(height: isSmallScreen ? 20 : 40),
                                 Padding(
                                   padding: EdgeInsets.symmetric(
-                                    horizontal: isSmallScreen ? 10 : (isLargeScreen ? 40 : 20)
+                                    horizontal:
+                                        isSmallScreen
+                                            ? 10
+                                            : (isLargeScreen ? 40 : 20),
                                   ),
                                   child: GridView.builder(
                                     shrinkWrap: true,
-                                    physics: const NeverScrollableScrollPhysics(),
-                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: isLargeScreen ? 4 : 2,
-                                      childAspectRatio: isSmallScreen ? 2.0 : (isLargeScreen ? 3.0 : 2.5),
-                                      crossAxisSpacing: isSmallScreen ? 5 : 10,
-                                      mainAxisSpacing: isSmallScreen ? 5 : 10,
-                                    ),
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    gridDelegate:
+                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: isLargeScreen ? 4 : 2,
+                                          childAspectRatio:
+                                              isSmallScreen
+                                                  ? 2.0
+                                                  : (isLargeScreen ? 3.0 : 2.5),
+                                          crossAxisSpacing:
+                                              isSmallScreen ? 5 : 10,
+                                          mainAxisSpacing:
+                                              isSmallScreen ? 5 : 10,
+                                        ),
                                     itemCount: 4,
                                     itemBuilder: (context, index) {
                                       return OptionButton(
                                         option: gameProvider.options[index],
                                         index: index,
-                                        isSelected: gameProvider.selectedOptionIndex == index,
-                                        isCorrect: gameProvider.isAnswered && index == gameProvider.correctOptionIndex,
-                                        isWrong: gameProvider.isAnswered && 
-                                                 gameProvider.selectedOptionIndex == index && 
-                                                 index != gameProvider.correctOptionIndex,
+                                        isSelected:
+                                            gameProvider.selectedOptionIndex ==
+                                            index,
+                                        isCorrect:
+                                            gameProvider.isAnswered &&
+                                            index ==
+                                                gameProvider.correctOptionIndex,
+                                        isWrong:
+                                            gameProvider.isAnswered &&
+                                            gameProvider.selectedOptionIndex ==
+                                                index &&
+                                            index !=
+                                                gameProvider.correctOptionIndex,
                                         isSmallScreen: isSmallScreen,
                                         currentLevel: gameProvider.currentLevel,
                                         onTap: () {
                                           if (!gameProvider.isAnswered) {
                                             gameProvider.selectOption(index);
-                                            
+
                                             // Reproducir sonido de éxito o error
-                                            if (index == gameProvider.correctOptionIndex) {
-                                              AudioService().playAudio('assets/audio/success.mp3');
+                                            if (index ==
+                                                gameProvider
+                                                    .correctOptionIndex) {
+                                              AudioService().playAudio(
+                                                'assets/audio/success.mp3',
+                                              );
                                             } else {
-                                              AudioService().playAudio('assets/audio/error.mp3');
-                                              
+                                              AudioService().playAudio(
+                                                'assets/audio/error.mp3',
+                                              );
+
                                               // Después de un breve retraso, reproducir el audio de la letra correcta
-                                              Future.delayed(const Duration(milliseconds: 1000), () {
-                                                AudioService().playAudio(gameProvider.currentLetter.audioPath);
-                                              });
+                                              Future.delayed(
+                                                const Duration(
+                                                  milliseconds: 1000,
+                                                ),
+                                                () {
+                                                  AudioService().playAudio(
+                                                    gameProvider
+                                                        .currentLetter
+                                                        .audioPath,
+                                                  );
+                                                },
+                                              );
                                             }
                                           }
                                         },
@@ -224,8 +291,8 @@ class GameScreen extends StatelessWidget {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green,
                           padding: EdgeInsets.symmetric(
-                            horizontal: isSmallScreen ? 30 : 50, 
-                            vertical: isSmallScreen ? 10 : 15
+                            horizontal: isSmallScreen ? 30 : 50,
+                            vertical: isSmallScreen ? 10 : 15,
                           ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
@@ -252,17 +319,18 @@ class GameScreen extends StatelessWidget {
   Widget _buildResultsScreen(BuildContext context, GameProvider gameProvider) {
     // Obtener el tamaño de la pantalla
     final Size screenSize = MediaQuery.of(context).size;
-    final bool isSmallScreen = screenSize.width < 360 || screenSize.height < 600;
+    final bool isSmallScreen =
+        screenSize.width < 360 || screenSize.height < 600;
     final bool isLargeScreen = screenSize.width > 600;
-    
+
     // Calcular el porcentaje de aciertos
     final int totalLetters = 22;
     final int correctAnswers = gameProvider.completedLetters.length;
     final double percentage = (correctAnswers / totalLetters) * 100;
-    
+
     String message;
     Color messageColor;
-    
+
     if (percentage >= 90) {
       message = '¡Excelente! Eres un experto en Teolingo';
       messageColor = Colors.green;
@@ -276,7 +344,7 @@ class GameScreen extends StatelessWidget {
       message = 'Necesitas más práctica. ¡No te rindas!';
       messageColor = Colors.orange;
     }
-    
+
     return SafeArea(
       child: Center(
         child: SingleChildScrollView(
@@ -305,7 +373,9 @@ class GameScreen extends StatelessWidget {
                 SizedBox(height: isSmallScreen ? 10 : 20),
                 Container(
                   padding: EdgeInsets.all(isSmallScreen ? 15 : 20),
-                  margin: EdgeInsets.symmetric(horizontal: isSmallScreen ? 15 : 20),
+                  margin: EdgeInsets.symmetric(
+                    horizontal: isSmallScreen ? 15 : 20,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
@@ -329,16 +399,12 @@ class GameScreen extends StatelessWidget {
                       SizedBox(height: isSmallScreen ? 5 : 10),
                       Text(
                         'Letras aprendidas: $correctAnswers de $totalLetters',
-                        style: TextStyle(
-                          fontSize: isSmallScreen ? 16 : 18,
-                        ),
+                        style: TextStyle(fontSize: isSmallScreen ? 16 : 18),
                       ),
                       SizedBox(height: isSmallScreen ? 5 : 10),
                       Text(
                         'Porcentaje de aciertos: ${percentage.toInt()}%',
-                        style: TextStyle(
-                          fontSize: isSmallScreen ? 16 : 18,
-                        ),
+                        style: TextStyle(fontSize: isSmallScreen ? 16 : 18),
                       ),
                       SizedBox(height: isSmallScreen ? 10 : 20),
                       Text(
@@ -356,16 +422,28 @@ class GameScreen extends StatelessWidget {
                 SizedBox(height: isSmallScreen ? 20 : 30),
                 isLargeScreen
                     ? Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: _buildResultButtons(context, gameProvider, isSmallScreen),
-                      )
-                    : Column(
-                        children: [
-                          _buildResultButtons(context, gameProvider, isSmallScreen)[0],
-                          SizedBox(height: isSmallScreen ? 10 : 15),
-                          _buildResultButtons(context, gameProvider, isSmallScreen)[1],
-                        ],
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: _buildResultButtons(
+                        context,
+                        gameProvider,
+                        isSmallScreen,
                       ),
+                    )
+                    : Column(
+                      children: [
+                        _buildResultButtons(
+                          context,
+                          gameProvider,
+                          isSmallScreen,
+                        )[0],
+                        SizedBox(height: isSmallScreen ? 10 : 15),
+                        _buildResultButtons(
+                          context,
+                          gameProvider,
+                          isSmallScreen,
+                        )[1],
+                      ],
+                    ),
                 SizedBox(height: isSmallScreen ? 10 : 20),
               ],
             ),
@@ -375,7 +453,11 @@ class GameScreen extends StatelessWidget {
     );
   }
 
-  List<Widget> _buildResultButtons(BuildContext context, GameProvider gameProvider, bool isSmallScreen) {
+  List<Widget> _buildResultButtons(
+    BuildContext context,
+    GameProvider gameProvider,
+    bool isSmallScreen,
+  ) {
     return [
       ElevatedButton(
         onPressed: () {
@@ -384,8 +466,8 @@ class GameScreen extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.blue,
           padding: EdgeInsets.symmetric(
-            horizontal: isSmallScreen ? 20 : 30, 
-            vertical: isSmallScreen ? 10 : 15
+            horizontal: isSmallScreen ? 20 : 30,
+            vertical: isSmallScreen ? 10 : 15,
           ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
@@ -407,8 +489,8 @@ class GameScreen extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.green,
           padding: EdgeInsets.symmetric(
-            horizontal: isSmallScreen ? 20 : 30, 
-            vertical: isSmallScreen ? 10 : 15
+            horizontal: isSmallScreen ? 20 : 30,
+            vertical: isSmallScreen ? 10 : 15,
           ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
@@ -424,4 +506,4 @@ class GameScreen extends StatelessWidget {
       ),
     ];
   }
-} 
+}

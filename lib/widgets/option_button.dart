@@ -44,8 +44,8 @@ class OptionButton extends StatelessWidget {
 
     // Determinar qué mostrar según el nivel
     String displayText;
-    if (currentLevel == GameLevel.level4 || 
-        currentLevel == GameLevel.level5 || 
+    if (currentLevel == GameLevel.level4 ||
+        currentLevel == GameLevel.level5 ||
         currentLevel == GameLevel.level6) {
       // Niveles 4, 5, 6: Mostrar el símbolo
       displayText = option.symbol;
@@ -80,11 +80,13 @@ class OptionButton extends StatelessWidget {
                   displayText,
                   style: TextStyle(
                     color: textColor,
-                    fontSize: (currentLevel == GameLevel.level4 || 
-                              currentLevel == GameLevel.level5 || 
-                              currentLevel == GameLevel.level6) && !isSmallScreen
-                        ? 24 // Tamaño más grande para los símbolos
-                        : (isSmallScreen ? 14 : 18),
+                    fontSize:
+                        (currentLevel == GameLevel.level4 ||
+                                    currentLevel == GameLevel.level5 ||
+                                    currentLevel == GameLevel.level6) &&
+                                !isSmallScreen
+                            ? 24 // Tamaño más grande para los símbolos
+                            : (isSmallScreen ? 14 : 18),
                     fontWeight: FontWeight.bold,
                   ),
                   textAlign: TextAlign.center,
@@ -109,4 +111,4 @@ class OptionButton extends StatelessWidget {
       ),
     );
   }
-} 
+}

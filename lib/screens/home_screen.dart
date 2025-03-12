@@ -9,19 +9,17 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Obtener el tamaño de la pantalla
     final Size screenSize = MediaQuery.of(context).size;
-    final bool isSmallScreen = screenSize.width < 360 || screenSize.height < 600;
+    final bool isSmallScreen =
+        screenSize.width < 360 || screenSize.height < 600;
     final bool isLargeScreen = screenSize.width > 600;
-    
+
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              Colors.blue.shade700,
-              Colors.indigo.shade900,
-            ],
+            colors: [Colors.blue.shade700, Colors.indigo.shade900],
           ),
         ),
         child: SafeArea(
@@ -49,7 +47,9 @@ class HomeScreen extends StatelessWidget {
                   ),
                   SizedBox(height: isSmallScreen ? 10 : 20),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: isSmallScreen ? 20 : 40),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isSmallScreen ? 20 : 40,
+                    ),
                     child: Text(
                       'Aprende hebreo bíblico de forma divertida',
                       style: TextStyle(
@@ -78,7 +78,8 @@ class HomeScreen extends StatelessWidget {
                       child: Text(
                         'א ב ג',
                         style: TextStyle(
-                          fontSize: isSmallScreen ? 40 : (isLargeScreen ? 80 : 60),
+                          fontSize:
+                              isSmallScreen ? 40 : (isLargeScreen ? 80 : 60),
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -89,14 +90,16 @@ class HomeScreen extends StatelessWidget {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const LevelSelectionScreen()),
+                        MaterialPageRoute(
+                          builder: (context) => const LevelSelectionScreen(),
+                        ),
                       );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.amber,
                       padding: EdgeInsets.symmetric(
-                        horizontal: isSmallScreen ? 30 : 50, 
-                        vertical: isSmallScreen ? 10 : 15
+                        horizontal: isSmallScreen ? 30 : 50,
+                        vertical: isSmallScreen ? 10 : 15,
                       ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
@@ -116,7 +119,9 @@ class HomeScreen extends StatelessWidget {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const SubscriptionScreen()),
+                        MaterialPageRoute(
+                          builder: (context) => const SubscriptionScreen(),
+                        ),
                       );
                     },
                     icon: const Icon(Icons.vpn_key, color: Colors.black87),
@@ -131,8 +136,8 @@ class HomeScreen extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       padding: EdgeInsets.symmetric(
-                        horizontal: isSmallScreen ? 20 : 30, 
-                        vertical: isSmallScreen ? 8 : 12
+                        horizontal: isSmallScreen ? 20 : 30,
+                        vertical: isSmallScreen ? 8 : 12,
                       ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
@@ -179,9 +184,7 @@ class HomeScreen extends StatelessWidget {
                     },
                     child: const Text(
                       'Acerca de',
-                      style: TextStyle(
-                        color: Colors.white70,
-                      ),
+                      style: TextStyle(color: Colors.white70),
                     ),
                   ),
                   SizedBox(height: isSmallScreen ? 10 : 20),
@@ -193,4 +196,4 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
-} 
+}

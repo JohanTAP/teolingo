@@ -4,13 +4,13 @@ import 'package:flutter/foundation.dart';
 class AudioService {
   static final AudioService _instance = AudioService._internal();
   final AudioPlayer _audioPlayer = AudioPlayer();
-  
+
   factory AudioService() {
     return _instance;
   }
-  
+
   AudioService._internal();
-  
+
   Future<void> playAudio(String audioPath) async {
     try {
       await _audioPlayer.setAsset(audioPath);
@@ -19,8 +19,8 @@ class AudioService {
       debugPrint('Error al reproducir el audio: $e');
     }
   }
-  
+
   Future<void> dispose() async {
     await _audioPlayer.dispose();
   }
-} 
+}

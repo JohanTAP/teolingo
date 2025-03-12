@@ -11,8 +11,9 @@ class LevelSelectionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Obtener el tamaño de la pantalla
     final Size screenSize = MediaQuery.of(context).size;
-    final bool isSmallScreen = screenSize.width < 360 || screenSize.height < 600;
-    
+    final bool isSmallScreen =
+        screenSize.width < 360 || screenSize.height < 600;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Teolingo - Niveles'),
@@ -24,10 +25,7 @@ class LevelSelectionScreen extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              Colors.blue.shade700,
-              Colors.indigo.shade900,
-            ],
+            colors: [Colors.blue.shade700, Colors.indigo.shade900],
           ),
         ),
         child: SafeArea(
@@ -144,7 +142,9 @@ class LevelSelectionScreen extends StatelessWidget {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const SubscriptionScreen()),
+                          MaterialPageRoute(
+                            builder: (context) => const SubscriptionScreen(),
+                          ),
                         );
                       },
                       icon: const Icon(Icons.vpn_key, color: Colors.white70),
@@ -177,24 +177,23 @@ class LevelSelectionScreen extends StatelessWidget {
     bool isSmallScreen,
   ) {
     final bool isUnlocked = gameProvider.isLevelUnlocked(level);
-    
+
     return Card(
       elevation: 8,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
-        onTap: isUnlocked
-            ? () {
-                gameProvider.setLevel(level);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const GameScreen()),
-                );
-              }
-            : () {
-                _showSubscriptionDialog(context);
-              },
+        onTap:
+            isUnlocked
+                ? () {
+                  gameProvider.setLevel(level);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const GameScreen()),
+                  );
+                }
+                : () {
+                  _showSubscriptionDialog(context);
+                },
         borderRadius: BorderRadius.circular(16),
         child: Padding(
           padding: EdgeInsets.all(isSmallScreen ? 16.0 : 24.0),
@@ -274,7 +273,9 @@ class LevelSelectionScreen extends StatelessWidget {
                 Navigator.of(context).pop();
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const SubscriptionScreen()),
+                  MaterialPageRoute(
+                    builder: (context) => const SubscriptionScreen(),
+                  ),
                 );
               },
               child: const Text('Activar'),
@@ -284,4 +285,4 @@ class LevelSelectionScreen extends StatelessWidget {
       },
     );
   }
-} 
+}

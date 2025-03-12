@@ -17,16 +17,14 @@ class ProgressBar extends StatelessWidget {
     // Calcular el porcentaje de progreso
     // Si currentIndex es 0, el progreso es 0%
     // De lo contrario, es (currentIndex / totalLetters) * 100
-    final int progressPercentage = currentIndex == 0 
-        ? 0 
-        : ((currentIndex / totalLetters) * 100).toInt();
-    
+    final int progressPercentage =
+        currentIndex == 0 ? 0 : ((currentIndex / totalLetters) * 100).toInt();
+
     // Calcular el valor para el LinearProgressIndicator
     // Si currentIndex es 0, el valor es 0
     // De lo contrario, es currentIndex / totalLetters
-    final double progressValue = currentIndex == 0 
-        ? 0 
-        : currentIndex / totalLetters;
+    final double progressValue =
+        currentIndex == 0 ? 0 : currentIndex / totalLetters;
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: isSmallScreen ? 10.0 : 20.0),
@@ -67,4 +65,4 @@ class ProgressBar extends StatelessWidget {
       ),
     );
   }
-} 
+}
