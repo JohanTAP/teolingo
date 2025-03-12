@@ -64,7 +64,7 @@ class GameScreen extends StatelessWidget {
                   ),
                   ProgressBar(
                     currentIndex: gameProvider.currentIndex,
-                    totalLetters: 22,
+                    totalLetters: gameProvider.totalLetters,
                     isSmallScreen: isSmallScreen,
                   ),
                   SizedBox(height: isSmallScreen ? 10 : 20),

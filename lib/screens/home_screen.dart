@@ -53,19 +53,21 @@ class HomeScreen extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(height: isSmallScreen ? 10 : 20),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: isSmallScreen ? 20 : 40,
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    decoration: BoxDecoration(
+                      color:
+                          languageProvider.isHebrew
+                              ? Colors.amber.shade700.withAlpha(25)
+                              : Colors.teal.shade600.withAlpha(25),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
                       languageProvider.languageName,
                       style: TextStyle(
                         fontSize: isSmallScreen ? 18 : 24,
                         fontWeight: FontWeight.bold,
-                        color:
-                            languageProvider.isHebrew
-                                ? Colors.amber.shade300
-                                : Colors.teal.shade300,
+                        color: Colors.white,
                         fontFamily: 'Times New Roman',
                       ),
                       textAlign: TextAlign.center,
@@ -86,6 +88,7 @@ class HomeScreen extends StatelessWidget {
                       );
                     },
                     isSmallScreen,
+                    isLargeScreen,
                   ),
                   SizedBox(height: isSmallScreen ? 20 : 30),
                   _buildMainButton(
@@ -102,6 +105,7 @@ class HomeScreen extends StatelessWidget {
                       );
                     },
                     isSmallScreen,
+                    isLargeScreen,
                   ),
                   SizedBox(height: isSmallScreen ? 20 : 30),
                   _buildMainButton(
@@ -118,16 +122,24 @@ class HomeScreen extends StatelessWidget {
                       );
                     },
                     isSmallScreen,
+                    isLargeScreen,
                   ),
                   SizedBox(height: isSmallScreen ? 30 : 50),
-                  Text(
-                    'Aprende de forma divertida',
-                    style: TextStyle(
-                      fontSize: isSmallScreen ? 14 : 16,
-                      color: Colors.white70,
-                      fontFamily: 'Times New Roman',
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withAlpha(25),
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    textAlign: TextAlign.center,
+                    child: Text(
+                      'Aprende de forma divertida',
+                      style: TextStyle(
+                        fontSize: isSmallScreen ? 14 : 16,
+                        color: Colors.white,
+                        fontFamily: 'Times New Roman',
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ],
               ),
@@ -145,9 +157,17 @@ class HomeScreen extends StatelessWidget {
     Color color,
     VoidCallback onPressed,
     bool isSmallScreen,
+    bool isLargeScreen,
   ) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: isSmallScreen ? 30 : 50),
+    // Calcular el ancho del botón basado en el tamaño de la pantalla
+    final screenWidth = MediaQuery.of(context).size.width;
+    final buttonWidth =
+        isLargeScreen
+            ? screenWidth * 0.5
+            : (isSmallScreen ? screenWidth * 0.8 : screenWidth * 0.7);
+
+    return SizedBox(
+      width: buttonWidth,
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
@@ -156,6 +176,7 @@ class HomeScreen extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
           ),
+          elevation: 5,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

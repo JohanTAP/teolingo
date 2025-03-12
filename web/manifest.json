@@ -1,34 +1,34 @@
 {
-    "name": "teolingo",
-    "short_name": "teolingo",
+    "name": "Teolingo - Aprende idiomas bíblicos",
+    "short_name": "Teolingo",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#4169E1",
+    "theme_color": "#4169E1",
+    "description": "Aplicación educativa para aprender hebreo y griego bíblico de forma interactiva y divertida.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
         {
-            "src": "icons/Icon-192.png",
+            "src": "assets/teolingo_logo.jpg",
             "sizes": "192x192",
-            "type": "image/png"
+            "type": "image/jpg"
         },
         {
-            "src": "icons/Icon-512.png",
+            "src": "assets/teolingo_logo.jpg",
             "sizes": "512x512",
-            "type": "image/png"
+            "type": "image/jpg"
         },
         {
-            "src": "icons/Icon-maskable-192.png",
+            "src": "assets/teolingo_logo.jpg",
             "sizes": "192x192",
-            "type": "image/png",
+            "type": "image/jpg",
             "purpose": "maskable"
         },
         {
-            "src": "icons/Icon-maskable-512.png",
+            "src": "assets/teolingo_logo.jpg",
             "sizes": "512x512",
-            "type": "image/png",
+            "type": "image/jpg",
             "purpose": "maskable"
         }
     ]

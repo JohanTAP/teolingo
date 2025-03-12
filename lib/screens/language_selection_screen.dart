@@ -52,14 +52,25 @@ class LanguageSelectionScreen extends StatelessWidget {
                     padding: EdgeInsets.symmetric(
                       horizontal: isSmallScreen ? 20 : 40,
                     ),
-                    child: Text(
-                      'Selecciona el idioma que deseas aprender',
-                      style: TextStyle(
-                        fontSize: isSmallScreen ? 16 : 20,
-                        color: Colors.white,
-                        fontFamily: 'Times New Roman',
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        vertical: 8,
+                        horizontal: 16,
                       ),
-                      textAlign: TextAlign.center,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        'Selecciona el idioma que deseas aprender',
+                        style: TextStyle(
+                          fontSize: isSmallScreen ? 16 : 20,
+                          color: Colors.white,
+                          fontFamily: 'Times New Roman',
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                   ),
                   SizedBox(height: isSmallScreen ? 30 : 50),
@@ -71,6 +82,7 @@ class LanguageSelectionScreen extends StatelessWidget {
                     Colors.amber.shade700,
                     LanguageType.hebrew,
                     isSmallScreen,
+                    isLargeScreen,
                   ),
                   SizedBox(height: isSmallScreen ? 20 : 30),
                   _buildLanguageOption(
@@ -81,6 +93,7 @@ class LanguageSelectionScreen extends StatelessWidget {
                     Colors.teal.shade600,
                     LanguageType.greek,
                     isSmallScreen,
+                    isLargeScreen,
                   ),
                   SizedBox(height: isSmallScreen ? 30 : 50),
                 ],
@@ -100,17 +113,22 @@ class LanguageSelectionScreen extends StatelessWidget {
     Color color,
     LanguageType language,
     bool isSmallScreen,
+    bool isLargeScreen,
   ) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: isSmallScreen ? 20 : 40),
+    // Calcular el ancho del botón basado en el tamaño de la pantalla
+    final screenWidth = MediaQuery.of(context).size.width;
+    final buttonWidth = isLargeScreen 
+        ? screenWidth * 0.6 
+        : (isSmallScreen ? screenWidth * 0.85 : screenWidth * 0.75);
+    
+    return Container(
+      width: buttonWidth,
       child: ElevatedButton(
         onPressed: () {
           // Establecer el idioma seleccionado
-          Provider.of<LanguageProvider>(
-            context,
-            listen: false,
-          ).setLanguage(language);
-
+          Provider.of<LanguageProvider>(context, listen: false)
+              .setLanguage(language);
+          
           // Navegar a la pantalla principal
           Navigator.pushReplacement(
             context,
@@ -126,10 +144,15 @@ class LanguageSelectionScreen extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
           ),
+          elevation: 5,
         ),
         child: Row(
           children: [
-            Icon(icon, color: Colors.white, size: isSmallScreen ? 30 : 40),
+            Icon(
+              icon,
+              color: Colors.white,
+              size: isSmallScreen ? 30 : 40,
+            ),
             SizedBox(width: isSmallScreen ? 15 : 20),
             Expanded(
               child: Column(
@@ -156,7 +179,10 @@ class LanguageSelectionScreen extends StatelessWidget {
                 ],
               ),
             ),
-            const Icon(Icons.arrow_forward_ios, color: Colors.white),
+            const Icon(
+              Icons.arrow_forward_ios,
+              color: Colors.white,
+            ),
           ],
         ),
       ),
