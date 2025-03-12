@@ -432,9 +432,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color:
-            isUnlocked
-                ? Colors.green.withOpacity(0.1)
-                : Colors.grey.withOpacity(0.1),
+            isUnlocked ? Colors.green.withAlpha(25) : Colors.grey.withAlpha(25),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: isUnlocked ? Colors.green : Colors.grey,
@@ -487,7 +485,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.blue.withOpacity(0.1),
+        color: Colors.blue.withAlpha(25),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.blue, width: 1),
       ),

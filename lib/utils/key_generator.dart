@@ -8,7 +8,7 @@ class KeyGenerator {
   static const String _chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
   // Clave especial para el nivel 4
-  static const String SPECIAL_KEY_LEVEL4 = 'Ve22081850';
+  static const String specialKeyLevel4 = 'Ve22081850';
 
   /// Genera una clave de activación para el nivel especificado
   /// [level] debe ser 2, 3, 4, 5, 6 o 7
@@ -45,7 +45,7 @@ class KeyGenerator {
   /// Valida si una clave tiene el formato correcto
   static bool isValidKeyFormat(String key) {
     // Verificar si es la clave especial para el nivel 4
-    if (key == SPECIAL_KEY_LEVEL4) {
+    if (key == specialKeyLevel4) {
       if (kDebugMode) {
         print('Clave especial para nivel 4 detectada');
       }
@@ -61,7 +61,7 @@ class KeyGenerator {
   /// Retorna 0 si la clave no es válida
   static int getLevelFromKey(String key) {
     // Verificar si es la clave especial para el nivel 4
-    if (key == SPECIAL_KEY_LEVEL4) {
+    if (key == specialKeyLevel4) {
       if (kDebugMode) {
         print('Clave especial para nivel 4 detectada');
       }
@@ -171,7 +171,7 @@ void main() {
   }
 
   // Validar la clave especial para el nivel 4
-  final specialKey = KeyGenerator.SPECIAL_KEY_LEVEL4;
+  final specialKey = KeyGenerator.specialKeyLevel4;
   if (kDebugMode) {
     print('\nValidando clave especial: $specialKey');
   }

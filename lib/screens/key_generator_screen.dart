@@ -43,7 +43,7 @@ class _KeyGeneratorScreenState extends State<KeyGeneratorScreen> {
       if (key.isEmpty) {
         _specialKeyError = 'Por favor, ingresa la clave de acceso';
         _specialKeySuccess = null;
-      } else if (key == KeyGenerator.SPECIAL_KEY_LEVEL4) {
+      } else if (key == KeyGenerator.specialKeyLevel4) {
         _specialKeyError = null;
         _specialKeySuccess = '¡Acceso concedido!';
         _isAuthenticated = true;
