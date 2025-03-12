@@ -58,8 +58,8 @@ class HomeScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                       color:
                           languageProvider.isHebrew
-                              ? Colors.amber.shade700.withAlpha(25)
-                              : Colors.teal.shade600.withAlpha(25),
+                              ? Colors.white.withAlpha(25)
+                              : Colors.white.withAlpha(25),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(

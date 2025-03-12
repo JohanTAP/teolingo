@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/game_provider.dart';
+import '../providers/language_provider.dart';
 import 'game_screen.dart';
 import 'subscription_screen.dart';
 
@@ -13,6 +14,14 @@ class LevelSelectionScreen extends StatelessWidget {
     final Size screenSize = MediaQuery.of(context).size;
     final bool isSmallScreen =
         screenSize.width < 360 || screenSize.height < 600;
+
+    // Obtener el proveedor de idioma
+    final languageProvider = Provider.of<LanguageProvider>(context);
+    final bool isHebrew = languageProvider.isHebrew;
+
+    // Definir los nombres de la primera y última letra según el idioma
+    final String firstLetter = isHebrew ? 'Alef' : 'Alfa';
+    final String lastLetter = isHebrew ? 'Tav' : 'Omega';
 
     return Scaffold(
       appBar: AppBar(
@@ -62,7 +71,7 @@ class LevelSelectionScreen extends StatelessWidget {
                               gameProvider,
                               GameLevel.level1,
                               'Nivel 1: Orden Alfabético',
-                              'Aprende las letras en orden alfabético, desde Alef hasta Tav.',
+                              'Aprende las letras en orden alfabético, desde $firstLetter hasta $lastLetter.',
                               Icons.sort_by_alpha,
                               Colors.green,
                               isSmallScreen,
@@ -73,7 +82,7 @@ class LevelSelectionScreen extends StatelessWidget {
                               gameProvider,
                               GameLevel.level2,
                               'Nivel 2: Orden Inverso',
-                              'Aprende las letras en orden inverso, desde Tav hasta Alef.',
+                              'Aprende las letras en orden inverso, desde $lastLetter hasta $firstLetter.',
                               Icons.sort,
                               Colors.orange,
                               isSmallScreen,
@@ -138,7 +147,7 @@ class LevelSelectionScreen extends StatelessWidget {
                       },
                     ),
                     SizedBox(height: isSmallScreen ? 20 : 30),
-                    TextButton.icon(
+                    ElevatedButton.icon(
                       onPressed: () {
                         Navigator.push(
                           context,
@@ -147,12 +156,20 @@ class LevelSelectionScreen extends StatelessWidget {
                           ),
                         );
                       },
-                      icon: const Icon(Icons.vpn_key, color: Colors.white70),
+                      icon: const Icon(Icons.vpn_key),
                       label: const Text(
                         'Activar Niveles Adicionales',
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontWeight: FontWeight.bold,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.amber.shade700,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 12,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                     ),
@@ -177,9 +194,16 @@ class LevelSelectionScreen extends StatelessWidget {
     bool isSmallScreen,
   ) {
     final bool isUnlocked = gameProvider.isLevelUnlocked(level);
+    final Color cardColor = isUnlocked ? Colors.white : Colors.grey.shade300;
+    final Color iconBgColor = isUnlocked ? color : Colors.grey.shade600;
+    final Color textColor = isUnlocked ? Colors.black87 : Colors.grey.shade700;
+    final Color descriptionColor =
+        isUnlocked ? Colors.black54 : Colors.grey.shade600;
+    final Color statusColor = isUnlocked ? color : Colors.grey.shade600;
 
     return Card(
-      elevation: 8,
+      elevation: isUnlocked ? 8 : 4,
+      color: cardColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
         onTap:
@@ -195,57 +219,60 @@ class LevelSelectionScreen extends StatelessWidget {
                   _showSubscriptionDialog(context);
                 },
         borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: EdgeInsets.all(isSmallScreen ? 16.0 : 24.0),
-          child: Row(
-            children: [
-              Container(
-                width: isSmallScreen ? 50 : 60,
-                height: isSmallScreen ? 50 : 60,
-                decoration: BoxDecoration(
-                  color: isUnlocked ? color : Colors.grey,
-                  shape: BoxShape.circle,
+        child: Opacity(
+          opacity: isUnlocked ? 1.0 : 0.8,
+          child: Padding(
+            padding: EdgeInsets.all(isSmallScreen ? 16.0 : 24.0),
+            child: Row(
+              children: [
+                Container(
+                  width: isSmallScreen ? 50 : 60,
+                  height: isSmallScreen ? 50 : 60,
+                  decoration: BoxDecoration(
+                    color: iconBgColor,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    isUnlocked ? icon : Icons.lock,
+                    color: Colors.white,
+                    size: isSmallScreen ? 24 : 30,
+                  ),
                 ),
-                child: Icon(
-                  isUnlocked ? icon : Icons.lock,
-                  color: Colors.white,
-                  size: isSmallScreen ? 24 : 30,
+                SizedBox(width: isSmallScreen ? 12 : 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: isSmallScreen ? 18 : 20,
+                          fontWeight: FontWeight.bold,
+                          color: textColor,
+                        ),
+                      ),
+                      SizedBox(height: isSmallScreen ? 4 : 8),
+                      Text(
+                        description,
+                        style: TextStyle(
+                          fontSize: isSmallScreen ? 12 : 14,
+                          color: descriptionColor,
+                        ),
+                      ),
+                      SizedBox(height: isSmallScreen ? 8 : 12),
+                      Text(
+                        isUnlocked ? 'Toca para comenzar' : 'Nivel bloqueado',
+                        style: TextStyle(
+                          fontSize: isSmallScreen ? 12 : 14,
+                          fontWeight: FontWeight.bold,
+                          color: statusColor,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              SizedBox(width: isSmallScreen ? 12 : 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: TextStyle(
-                        fontSize: isSmallScreen ? 18 : 20,
-                        fontWeight: FontWeight.bold,
-                        color: isUnlocked ? Colors.black87 : Colors.grey,
-                      ),
-                    ),
-                    SizedBox(height: isSmallScreen ? 4 : 8),
-                    Text(
-                      description,
-                      style: TextStyle(
-                        fontSize: isSmallScreen ? 12 : 14,
-                        color: isUnlocked ? Colors.black54 : Colors.grey,
-                      ),
-                    ),
-                    SizedBox(height: isSmallScreen ? 8 : 12),
-                    Text(
-                      isUnlocked ? 'Toca para comenzar' : 'Requiere activación',
-                      style: TextStyle(
-                        fontSize: isSmallScreen ? 12 : 14,
-                        fontWeight: FontWeight.bold,
-                        color: isUnlocked ? color : Colors.grey,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

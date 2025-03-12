@@ -171,7 +171,7 @@ class LanguageSelectionScreen extends StatelessWidget {
                     description,
                     style: TextStyle(
                       fontSize: isSmallScreen ? 14 : 16,
-                      color: Colors.white.withAlpha(25),
+                      color: Colors.white,
                       fontFamily: 'Times New Roman',
                     ),
                   ),
