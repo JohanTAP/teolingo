@@ -53,11 +53,37 @@ class GameScreen extends StatelessWidget {
                           streak: gameProvider.streak,
                           isSmallScreen: isSmallScreen,
                         ),
-                        IconButton(
-                          icon: const Icon(Icons.refresh, color: Colors.white),
-                          onPressed: () {
-                            gameProvider.resetGame();
-                          },
+                        Row(
+                          children: [
+                            // Botón para activar/desactivar pistas
+                            IconButton(
+                              icon: Icon(
+                                gameProvider.showHints
+                                    ? Icons.lightbulb
+                                    : Icons.lightbulb_outline,
+                                color:
+                                    gameProvider.showHints
+                                        ? Colors.amber
+                                        : Colors.white,
+                              ),
+                              tooltip:
+                                  gameProvider.showHints
+                                      ? 'Desactivar pistas'
+                                      : 'Activar pistas',
+                              onPressed: () {
+                                gameProvider.toggleHints();
+                              },
+                            ),
+                            IconButton(
+                              icon: const Icon(
+                                Icons.refresh,
+                                color: Colors.white,
+                              ),
+                              onPressed: () {
+                                gameProvider.resetGame();
+                              },
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -74,7 +100,9 @@ class GameScreen extends StatelessWidget {
                         return SingleChildScrollView(
                           child: Container(
                             constraints: BoxConstraints(
-                              minHeight: constraints.maxHeight,
+                              minHeight:
+                                  constraints.maxHeight -
+                                  (isSmallScreen ? 60 : 80),
                             ),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -105,12 +133,12 @@ class GameScreen extends StatelessWidget {
                                     Container(
                                       width:
                                           isSmallScreen
-                                              ? 120
-                                              : (isLargeScreen ? 180 : 150),
+                                              ? 200
+                                              : (isLargeScreen ? 280 : 250),
                                       height:
                                           isSmallScreen
-                                              ? 120
-                                              : (isLargeScreen ? 180 : 150),
+                                              ? 200
+                                              : (isLargeScreen ? 280 : 250),
                                       decoration: BoxDecoration(
                                         color: Colors.white,
                                         borderRadius: BorderRadius.circular(20),
@@ -122,46 +150,111 @@ class GameScreen extends StatelessWidget {
                                           ),
                                         ],
                                       ),
-                                      child: Center(
-                                        child: Text(
-                                          gameProvider.currentLevel ==
-                                                      GameLevel.level4 ||
-                                                  gameProvider.currentLevel ==
-                                                      GameLevel.level5 ||
-                                                  gameProvider.currentLevel ==
-                                                      GameLevel.level6
-                                              ? gameProvider.currentLetter.name
-                                              : (gameProvider.currentLevel ==
-                                                      GameLevel.level7
-                                                  ? gameProvider
-                                                      .currentLetter
-                                                      .symbol
-                                                  : gameProvider
-                                                      .currentLetter
-                                                      .symbol),
-                                          style: TextStyle(
-                                            fontSize:
-                                                (gameProvider.currentLevel ==
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 10,
+                                            ),
+                                            child: FittedBox(
+                                              fit: BoxFit.scaleDown,
+                                              child: Text(
+                                                gameProvider.currentLevel ==
                                                             GameLevel.level4 ||
                                                         gameProvider
                                                                 .currentLevel ==
                                                             GameLevel.level5 ||
                                                         gameProvider
                                                                 .currentLevel ==
-                                                            GameLevel.level6)
-                                                    ? (isSmallScreen
-                                                        ? 30
-                                                        : (isLargeScreen
-                                                            ? 50
-                                                            : 40))
-                                                    : (isSmallScreen
-                                                        ? 60
-                                                        : (isLargeScreen
-                                                            ? 100
-                                                            : 80)),
-                                            fontWeight: FontWeight.bold,
+                                                            GameLevel.level6
+                                                    ? gameProvider
+                                                        .currentLetter
+                                                        .name
+                                                    : (gameProvider
+                                                                .currentLevel ==
+                                                            GameLevel.level7
+                                                        ? gameProvider
+                                                            .currentLetter
+                                                            .symbol
+                                                        : gameProvider
+                                                            .currentLetter
+                                                            .symbol),
+                                                style: TextStyle(
+                                                  fontSize:
+                                                      (gameProvider.currentLevel ==
+                                                                  GameLevel
+                                                                      .level4 ||
+                                                              gameProvider
+                                                                      .currentLevel ==
+                                                                  GameLevel
+                                                                      .level5 ||
+                                                              gameProvider
+                                                                      .currentLevel ==
+                                                                  GameLevel
+                                                                      .level6)
+                                                          ? (isSmallScreen
+                                                              ? 30
+                                                              : (isLargeScreen
+                                                                  ? 50
+                                                                  : 40))
+                                                          : (isSmallScreen
+                                                              ? 80
+                                                              : (isLargeScreen
+                                                                  ? 120
+                                                                  : 100)),
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
                                           ),
-                                        ),
+                                          if (gameProvider.showHints &&
+                                              gameProvider.currentLevel !=
+                                                  GameLevel.level4 &&
+                                              gameProvider.currentLevel !=
+                                                  GameLevel.level5 &&
+                                              gameProvider.currentLevel !=
+                                                  GameLevel.level6)
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                top: 8.0,
+                                              ),
+                                              child: Column(
+                                                children: [
+                                                  if (gameProvider
+                                                      .currentLetter
+                                                      .transliteration
+                                                      .isNotEmpty)
+                                                    Text(
+                                                      'Trans: ${gameProvider.currentLetter.transliteration}',
+                                                      style: TextStyle(
+                                                        fontSize:
+                                                            isSmallScreen
+                                                                ? 12
+                                                                : 14,
+                                                        color: Colors.grey[700],
+                                                      ),
+                                                    ),
+                                                  if (gameProvider
+                                                          .currentLetter
+                                                          .numericValue >
+                                                      0)
+                                                    Text(
+                                                      'Valor: ${gameProvider.currentLetter.numericValue}',
+                                                      style: TextStyle(
+                                                        fontSize:
+                                                            isSmallScreen
+                                                                ? 12
+                                                                : 14,
+                                                        color: Colors.grey[700],
+                                                      ),
+                                                    ),
+                                                ],
+                                              ),
+                                            ),
+                                        ],
                                       ),
                                     ),
                                     Positioned(
@@ -192,9 +285,142 @@ class GameScreen extends StatelessWidget {
                                         ),
                                       ),
                                     ),
+                                    if (gameProvider.currentLetter.isGuttural ||
+                                        gameProvider
+                                            .currentLetter
+                                            .isBegadkephat ||
+                                        gameProvider
+                                            .currentLetter
+                                            .finalForm
+                                            .isNotEmpty)
+                                      Positioned(
+                                        left: 10,
+                                        bottom: 10,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            // Mostrar información adicional
+                                            showDialog(
+                                              context: context,
+                                              builder:
+                                                  (context) => AlertDialog(
+                                                    title: Text(
+                                                      'Información de ${gameProvider.currentLetter.name}',
+                                                    ),
+                                                    content: SingleChildScrollView(
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        children: [
+                                                          if (gameProvider
+                                                              .currentLetter
+                                                              .isGuttural)
+                                                            const Padding(
+                                                              padding:
+                                                                  EdgeInsets.only(
+                                                                    bottom: 8.0,
+                                                                  ),
+                                                              child: Text(
+                                                                '• Letra gutural',
+                                                              ),
+                                                            ),
+                                                          if (gameProvider
+                                                              .currentLetter
+                                                              .isBegadkephat)
+                                                            const Padding(
+                                                              padding:
+                                                                  EdgeInsets.only(
+                                                                    bottom: 8.0,
+                                                                  ),
+                                                              child: Text(
+                                                                '• Letra begadkephat (puede llevar dagesh)',
+                                                              ),
+                                                            ),
+                                                          if (gameProvider
+                                                              .currentLetter
+                                                              .finalForm
+                                                              .isNotEmpty)
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets.only(
+                                                                    bottom: 8.0,
+                                                                  ),
+                                                              child: Text(
+                                                                '• Forma final: ${gameProvider.currentLetter.finalForm}',
+                                                              ),
+                                                            ),
+                                                          if (gameProvider
+                                                              .currentLetter
+                                                              .notes
+                                                              .isNotEmpty)
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets.only(
+                                                                    bottom: 8.0,
+                                                                  ),
+                                                              child: Text(
+                                                                '• ${gameProvider.currentLetter.notes}',
+                                                              ),
+                                                            ),
+                                                          const Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                  bottom: 8.0,
+                                                                  top: 8.0,
+                                                                ),
+                                                            child: Text(
+                                                              'Pronunciación:',
+                                                              style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Text(
+                                                            gameProvider
+                                                                .currentLetter
+                                                                .pronunciation,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed:
+                                                            () =>
+                                                                Navigator.of(
+                                                                  context,
+                                                                ).pop(),
+                                                        child: const Text(
+                                                          'Cerrar',
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                            );
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.all(
+                                              isSmallScreen ? 6 : 8,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: Colors.amber.shade700,
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: Icon(
+                                              Icons.info_outline,
+                                              color: Colors.white,
+                                              size: isSmallScreen ? 20 : 24,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                   ],
                                 ),
-                                SizedBox(height: isSmallScreen ? 20 : 40),
+                                SizedBox(height: isSmallScreen ? 15 : 25),
                                 Padding(
                                   padding: EdgeInsets.symmetric(
                                     horizontal:
@@ -214,9 +440,20 @@ class GameScreen extends StatelessWidget {
                                                   ? 2.0
                                                   : (isLargeScreen ? 3.0 : 2.5),
                                           crossAxisSpacing:
-                                              isSmallScreen ? 5 : 10,
+                                              isSmallScreen ? 8 : 12,
                                           mainAxisSpacing:
-                                              isSmallScreen ? 5 : 10,
+                                              isSmallScreen ? 8 : 12,
+                                          mainAxisExtent:
+                                              (gameProvider.currentLevel ==
+                                                          GameLevel.level4 ||
+                                                      gameProvider
+                                                              .currentLevel ==
+                                                          GameLevel.level5 ||
+                                                      gameProvider
+                                                              .currentLevel ==
+                                                          GameLevel.level6)
+                                                  ? (isSmallScreen ? 75 : 95)
+                                                  : (isSmallScreen ? 65 : 85),
                                         ),
                                     itemCount: 4,
                                     itemBuilder: (context, index) {
@@ -276,6 +513,7 @@ class GameScreen extends StatelessWidget {
                                     },
                                   ),
                                 ),
+                                SizedBox(height: isSmallScreen ? 5 : 10),
                               ],
                             ),
                           ),
@@ -283,32 +521,36 @@ class GameScreen extends StatelessWidget {
                       },
                     ),
                   ),
-                  if (gameProvider.isAnswered)
-                    Padding(
-                      padding: EdgeInsets.all(isSmallScreen ? 10.0 : 20.0),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          gameProvider.nextQuestion();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
-                          padding: EdgeInsets.symmetric(
-                            horizontal: isSmallScreen ? 30 : 50,
-                            vertical: isSmallScreen ? 10 : 15,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                        child: Text(
-                          'Continuar',
-                          style: TextStyle(
-                            fontSize: isSmallScreen ? 16 : 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
+                  Container(
+                    height: isSmallScreen ? 60 : 80,
+                    alignment: Alignment.center,
+                    child:
+                        gameProvider.isAnswered
+                            ? ElevatedButton(
+                              onPressed: () {
+                                gameProvider.nextQuestion();
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green,
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: isSmallScreen ? 30 : 50,
+                                  vertical: isSmallScreen ? 10 : 15,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                              ),
+                              child: Text(
+                                'Continuar',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: isSmallScreen ? 16 : 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            )
+                            : const SizedBox(),
+                  ),
                 ],
               );
             },
@@ -478,6 +720,7 @@ class GameScreen extends StatelessWidget {
         child: Text(
           'Inicio',
           style: TextStyle(
+            color: Colors.white,
             fontSize: isSmallScreen ? 16 : 18,
             fontWeight: FontWeight.bold,
           ),
@@ -501,6 +744,7 @@ class GameScreen extends StatelessWidget {
         child: Text(
           'Jugar de nuevo',
           style: TextStyle(
+            color: Colors.white,
             fontSize: isSmallScreen ? 16 : 18,
             fontWeight: FontWeight.bold,
           ),

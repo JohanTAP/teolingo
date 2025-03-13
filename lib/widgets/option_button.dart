@@ -53,7 +53,8 @@ class OptionButton extends StatelessWidget {
       displayText = option.symbol;
     } else if (currentLevel == GameLevel.level7) {
       // Nivel 7: Mostrar la transliteración (equivalente en español)
-      displayText = option.transliteration;
+      displayText =
+          option.transliteration.isEmpty ? '-' : option.transliteration;
     } else {
       // Niveles 1, 2, 3: Mostrar el nombre
       displayText = option.name;
@@ -78,21 +79,54 @@ class OptionButton extends StatelessWidget {
             Center(
               child: Padding(
                 padding: EdgeInsets.all(isSmallScreen ? 4.0 : 8.0),
-                child: Text(
-                  displayText,
-                  style: TextStyle(
-                    fontFamily: 'Times New Roman',
-                    color: textColor,
-                    fontSize:
-                        (currentLevel == GameLevel.level4 ||
-                                    currentLevel == GameLevel.level5 ||
-                                    currentLevel == GameLevel.level6) &&
-                                !isSmallScreen
-                            ? 24 // Tamaño más grande para los símbolos
-                            : (isSmallScreen ? 14 : 18),
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.center,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      height:
+                          (currentLevel == GameLevel.level4 ||
+                                  currentLevel == GameLevel.level5 ||
+                                  currentLevel == GameLevel.level6)
+                              ? (isSmallScreen ? 40 : 50)
+                              : (isSmallScreen ? 30 : 40),
+                      alignment: Alignment.center,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          displayText,
+                          style: TextStyle(
+                            fontFamily: 'Times New Roman',
+                            color: textColor,
+                            fontSize:
+                                (currentLevel == GameLevel.level4 ||
+                                            currentLevel == GameLevel.level5 ||
+                                            currentLevel == GameLevel.level6) &&
+                                        !isSmallScreen
+                                    ? 28 // Tamaño más grande para los símbolos
+                                    : (isSmallScreen ? 16 : 20),
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                    // Mostrar valor numérico para los símbolos en niveles 4-6
+                    if ((currentLevel == GameLevel.level4 ||
+                            currentLevel == GameLevel.level5 ||
+                            currentLevel == GameLevel.level6) &&
+                        option.numericValue > 0)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4.0),
+                        child: Text(
+                          '(${option.numericValue})',
+                          style: TextStyle(
+                            color: textColor.withOpacity(0.7),
+                            fontSize: isSmallScreen ? 10 : 12,
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
               ),
             ),

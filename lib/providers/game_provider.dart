@@ -32,6 +32,7 @@ class GameProvider with ChangeNotifier {
   bool _isSubscriptionChecked = false;
   int _maxUnlockedLevel = 1;
   LanguageType _currentLanguage = LanguageType.hebrew;
+  bool _showHints = true; // Mostrar pistas adicionales por defecto
 
   // Constructor
   GameProvider() {
@@ -63,6 +64,7 @@ class GameProvider with ChangeNotifier {
   GameLevel get currentLevel => _currentLevel;
   int get maxUnlockedLevel => _maxUnlockedLevel;
   LanguageType get currentLanguage => _currentLanguage;
+  bool get showHints => _showHints; // Getter para showHints
 
   // Getter para obtener la letra actual según el idioma
   dynamic get currentLetter {
@@ -397,5 +399,11 @@ class GameProvider with ChangeNotifier {
       _isSubscriptionChecked = true;
       notifyListeners();
     }
+  }
+
+  // Método para cambiar la visibilidad de las pistas
+  void toggleHints() {
+    _showHints = !_showHints;
+    notifyListeners();
   }
 }
