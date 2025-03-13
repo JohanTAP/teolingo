@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import '../models/hebrew_letter.dart';
+import '../models/hebrew_vowel.dart';
 import '../models/greek_letter.dart';
 import '../services/subscription_service.dart';
 import '../utils/key_generator.dart';
@@ -15,6 +16,8 @@ enum GameLevel {
   level6, // Nombre a símbolo - Orden aleatorio
   level7, // Símbolo a nombre (se muestra el símbolo y hay que seleccionar el nombre)
 }
+
+enum HebrewCategory { consonants, vowels }
 
 class GameProvider with ChangeNotifier {
   int _currentIndex = 0;
@@ -32,6 +35,7 @@ class GameProvider with ChangeNotifier {
   bool _isSubscriptionChecked = false;
   int _maxUnlockedLevel = 1;
   LanguageType _currentLanguage = LanguageType.hebrew;
+  HebrewCategory _currentHebrewCategory = HebrewCategory.consonants;
   bool _showHints = true; // Mostrar pistas adicionales por defecto
 
   // Constructor
@@ -64,14 +68,22 @@ class GameProvider with ChangeNotifier {
   GameLevel get currentLevel => _currentLevel;
   int get maxUnlockedLevel => _maxUnlockedLevel;
   LanguageType get currentLanguage => _currentLanguage;
+  HebrewCategory get currentHebrewCategory => _currentHebrewCategory;
   bool get showHints => _showHints; // Getter para showHints
 
-  // Getter para obtener la letra actual según el idioma
+  // Getter para obtener la letra actual según el idioma y categoría
   dynamic get currentLetter {
     final int letterIndex = _levelSequence[_currentIndex];
-    return _currentLanguage == LanguageType.hebrew
-        ? HebrewLettersData.letters[letterIndex]
-        : GreekLettersData.letters[letterIndex];
+
+    if (_currentLanguage == LanguageType.hebrew) {
+      if (_currentHebrewCategory == HebrewCategory.consonants) {
+        return HebrewLettersData.letters[letterIndex];
+      } else {
+        return HebrewVowelsData.vowels[letterIndex];
+      }
+    } else {
+      return GreekLettersData.letters[letterIndex];
+    }
   }
 
   // Método para establecer el idioma actual
@@ -83,11 +95,27 @@ class GameProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // Método para obtener el total de letras según el idioma
-  int get totalLetters =>
-      _currentLanguage == LanguageType.hebrew
-          ? HebrewLettersData.letters.length
-          : GreekLettersData.letters.length;
+  // Método para establecer la categoría actual (solo para hebreo)
+  void setHebrewCategory(HebrewCategory category) {
+    if (_currentHebrewCategory == category) return;
+    _currentHebrewCategory = category;
+    // Reiniciar el juego con la nueva categoría
+    startGame(_currentLevel);
+    notifyListeners();
+  }
+
+  // Método para obtener el total de letras según el idioma y categoría
+  int get totalLetters {
+    if (_currentLanguage == LanguageType.hebrew) {
+      if (_currentHebrewCategory == HebrewCategory.consonants) {
+        return HebrewLettersData.letters.length;
+      } else {
+        return HebrewVowelsData.vowels.length;
+      }
+    } else {
+      return GreekLettersData.letters.length;
+    }
+  }
 
   // Iniciar el juego con un nivel específico
   void startGame(GameLevel level) {
@@ -99,6 +127,13 @@ class GameProvider with ChangeNotifier {
     _correctOptionIndex = null;
     _gameCompleted = false;
     _completedLetters = [];
+
+    // Desactivar pistas automáticamente para el nivel 7 (transliteración)
+    if (level == GameLevel.level7) {
+      _showHints = false;
+    } else {
+      _showHints = true; // Para otros niveles, activar pistas por defecto
+    }
 
     _setupLevelSequence();
     _generateOptions();
@@ -188,26 +223,49 @@ class GameProvider with ChangeNotifier {
       final int currentLetterIndex = _levelSequence[_currentIndex];
 
       if (_currentLanguage == LanguageType.hebrew) {
-        final letters = HebrewLettersData.letters;
-        List<HebrewLetter> hebrewOptions = [];
+        if (_currentHebrewCategory == HebrewCategory.consonants) {
+          final letters = HebrewLettersData.letters;
+          List<HebrewLetter> hebrewOptions = [];
 
-        for (int i = 0; i < 4; i++) {
-          if (i == _correctOptionIndex) {
-            hebrewOptions.add(letters[currentLetterIndex]);
-          } else {
-            int randomIndex;
-            do {
-              randomIndex = random.nextInt(letters.length);
-            } while (randomIndex == currentLetterIndex ||
-                hebrewOptions.any(
-                  (option) => option.symbol == letters[randomIndex].symbol,
-                ));
+          for (int i = 0; i < 4; i++) {
+            if (i == _correctOptionIndex) {
+              hebrewOptions.add(letters[currentLetterIndex]);
+            } else {
+              int randomIndex;
+              do {
+                randomIndex = random.nextInt(letters.length);
+              } while (randomIndex == currentLetterIndex ||
+                  hebrewOptions.any(
+                    (option) => option.symbol == letters[randomIndex].symbol,
+                  ));
 
-            hebrewOptions.add(letters[randomIndex]);
+              hebrewOptions.add(letters[randomIndex]);
+            }
           }
-        }
 
-        _options = hebrewOptions;
+          _options = hebrewOptions;
+        } else {
+          final vowels = HebrewVowelsData.vowels;
+          List<HebrewVowel> hebrewVowelOptions = [];
+
+          for (int i = 0; i < 4; i++) {
+            if (i == _correctOptionIndex) {
+              hebrewVowelOptions.add(vowels[currentLetterIndex]);
+            } else {
+              int randomIndex;
+              do {
+                randomIndex = random.nextInt(vowels.length);
+              } while (randomIndex == currentLetterIndex ||
+                  hebrewVowelOptions.any(
+                    (option) => option.symbol == vowels[randomIndex].symbol,
+                  ));
+
+              hebrewVowelOptions.add(vowels[randomIndex]);
+            }
+          }
+
+          _options = hebrewVowelOptions;
+        }
       } else {
         final letters = GreekLettersData.letters;
         List<GreekLetter> greekOptions = [];
@@ -235,10 +293,17 @@ class GameProvider with ChangeNotifier {
       // En caso de error, generamos opciones básicas
       _correctOptionIndex = 0;
       if (_currentLanguage == LanguageType.hebrew) {
-        _options = List.generate(
-          4,
-          (index) => HebrewLettersData.letters[index],
-        );
+        if (_currentHebrewCategory == HebrewCategory.consonants) {
+          _options = List.generate(
+            4,
+            (index) => HebrewLettersData.letters[index],
+          );
+        } else {
+          _options = List.generate(
+            4,
+            (index) => HebrewVowelsData.vowels[index],
+          );
+        }
       } else {
         _options = List.generate(4, (index) => GreekLettersData.letters[index]);
       }
@@ -292,6 +357,13 @@ class GameProvider with ChangeNotifier {
     _selectedOptionIndex = null;
     _gameCompleted = false;
     _completedLetters = [];
+
+    // Asegurar que las pistas estén desactivadas para el nivel 7
+    if (_currentLevel == GameLevel.level7) {
+      _showHints = false;
+      debugPrint('resetGame: Desactivando pistas para nivel 7');
+    }
+
     _setupLevelSequence();
     _generateOptions();
     notifyListeners();
@@ -314,6 +386,13 @@ class GameProvider with ChangeNotifier {
 
       debugPrint('Cambiando al nivel $levelNumber');
       _currentLevel = level;
+
+      // Desactivar pistas automáticamente para el nivel 7 (transliteración)
+      if (level == GameLevel.level7) {
+        _showHints = false;
+        debugPrint('Nivel 7: Desactivando pistas automáticamente');
+      }
+
       resetGame();
     } catch (e) {
       debugPrint('Error al cambiar de nivel: $e');

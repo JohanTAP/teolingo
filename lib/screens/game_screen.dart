@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:lottie/lottie.dart';
 import '../providers/game_provider.dart';
+import '../models/hebrew_vowel.dart';
+import '../models/hebrew_letter.dart';
 import '../widgets/option_button.dart';
 import '../widgets/progress_bar.dart';
 import '../widgets/score_display.dart';
@@ -30,6 +32,14 @@ class GameScreen extends StatelessWidget {
         child: SafeArea(
           child: Consumer<GameProvider>(
             builder: (context, gameProvider, child) {
+              // Asegurar que las pistas estén desactivadas en el nivel 7
+              if (gameProvider.currentLevel == GameLevel.level7 &&
+                  gameProvider.showHints) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  gameProvider.toggleHints();
+                });
+              }
+
               if (gameProvider.gameCompleted) {
                 return _buildResultsScreen(context, gameProvider);
               }
@@ -62,17 +72,24 @@ class GameScreen extends StatelessWidget {
                                     ? Icons.lightbulb
                                     : Icons.lightbulb_outline,
                                 color:
-                                    gameProvider.showHints
-                                        ? Colors.amber
-                                        : Colors.white,
+                                    gameProvider.currentLevel ==
+                                            GameLevel.level7
+                                        ? Colors
+                                            .grey // Color gris para indicar que está deshabilitado
+                                        : (gameProvider.showHints
+                                            ? Colors.amber
+                                            : Colors.white),
                               ),
                               tooltip:
                                   gameProvider.showHints
                                       ? 'Desactivar pistas'
                                       : 'Activar pistas',
-                              onPressed: () {
-                                gameProvider.toggleHints();
-                              },
+                              onPressed:
+                                  gameProvider.currentLevel == GameLevel.level7
+                                      ? null // Deshabilitar el botón en el nivel 7
+                                      : () {
+                                        gameProvider.toggleHints();
+                                      },
                             ),
                             IconButton(
                               icon: const Icon(
@@ -114,10 +131,17 @@ class GameScreen extends StatelessWidget {
                                               GameLevel.level5 ||
                                           gameProvider.currentLevel ==
                                               GameLevel.level6
-                                      ? '¿Cuál es el símbolo de esta letra?'
+                                      ? (gameProvider.currentHebrewCategory ==
+                                              HebrewCategory.vowels
+                                          ? '¿Cuál es el símbolo de esta vocal?'
+                                          : '¿Cuál es el símbolo de esta letra?')
                                       : (gameProvider.currentLevel ==
                                               GameLevel.level7
-                                          ? '¿Cuál es la transcripción de esta letra?'
+                                          ? (gameProvider
+                                                      .currentHebrewCategory ==
+                                                  HebrewCategory.vowels
+                                              ? '¿Cuál es la transcripción de esta vocal?'
+                                              : '¿Cuál es la transcripción de esta letra?')
                                           : '¿Cuál es el nombre de esta letra?'),
                                   style: TextStyle(
                                     fontSize: isSmallScreen ? 18 : 22,
@@ -160,53 +184,95 @@ class GameScreen extends StatelessWidget {
                                             ),
                                             child: FittedBox(
                                               fit: BoxFit.scaleDown,
-                                              child: Text(
-                                                gameProvider.currentLevel ==
-                                                            GameLevel.level4 ||
-                                                        gameProvider
-                                                                .currentLevel ==
-                                                            GameLevel.level5 ||
-                                                        gameProvider
-                                                                .currentLevel ==
-                                                            GameLevel.level6
-                                                    ? gameProvider
-                                                        .currentLetter
-                                                        .name
-                                                    : (gameProvider
-                                                                .currentLevel ==
-                                                            GameLevel.level7
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    gameProvider.currentLevel ==
+                                                                GameLevel
+                                                                    .level4 ||
+                                                            gameProvider
+                                                                    .currentLevel ==
+                                                                GameLevel
+                                                                    .level5 ||
+                                                            gameProvider
+                                                                    .currentLevel ==
+                                                                GameLevel.level6
                                                         ? gameProvider
                                                             .currentLetter
-                                                            .symbol
-                                                        : gameProvider
-                                                            .currentLetter
-                                                            .symbol),
-                                                style: TextStyle(
-                                                  fontSize:
-                                                      (gameProvider.currentLevel ==
-                                                                  GameLevel
-                                                                      .level4 ||
-                                                              gameProvider
-                                                                      .currentLevel ==
-                                                                  GameLevel
-                                                                      .level5 ||
-                                                              gameProvider
-                                                                      .currentLevel ==
-                                                                  GameLevel
-                                                                      .level6)
-                                                          ? (isSmallScreen
-                                                              ? 30
-                                                              : (isLargeScreen
-                                                                  ? 50
-                                                                  : 40))
-                                                          : (isSmallScreen
-                                                              ? 80
-                                                              : (isLargeScreen
-                                                                  ? 120
-                                                                  : 100)),
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                                textAlign: TextAlign.center,
+                                                            .name
+                                                        : (gameProvider
+                                                                    .currentLevel ==
+                                                                GameLevel.level7
+                                                            ? gameProvider
+                                                                .currentLetter
+                                                                .symbol
+                                                            : gameProvider
+                                                                .currentLetter
+                                                                .symbol),
+                                                    style: TextStyle(
+                                                      fontSize:
+                                                          (gameProvider.currentLevel ==
+                                                                      GameLevel
+                                                                          .level4 ||
+                                                                  gameProvider
+                                                                          .currentLevel ==
+                                                                      GameLevel
+                                                                          .level5 ||
+                                                                  gameProvider
+                                                                          .currentLevel ==
+                                                                      GameLevel
+                                                                          .level6)
+                                                              ? (isSmallScreen
+                                                                  ? 30
+                                                                  : (isLargeScreen
+                                                                      ? 50
+                                                                      : 40))
+                                                              : (isSmallScreen
+                                                                  ? 80
+                                                                  : (isLargeScreen
+                                                                      ? 120
+                                                                      : 100)),
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                  // Mostrar un ejemplo con una consonante para las vocales en niveles 4-6
+                                                  if (gameProvider
+                                                              .currentHebrewCategory ==
+                                                          HebrewCategory
+                                                              .vowels &&
+                                                      (gameProvider
+                                                                  .currentLevel ==
+                                                              GameLevel
+                                                                  .level4 ||
+                                                          gameProvider
+                                                                  .currentLevel ==
+                                                              GameLevel
+                                                                  .level5 ||
+                                                          gameProvider
+                                                                  .currentLevel ==
+                                                              GameLevel.level6))
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                            top: 10.0,
+                                                          ),
+                                                      child: Text(
+                                                        'Ejemplo: בּ${gameProvider.currentLetter.symbol}',
+                                                        style: TextStyle(
+                                                          fontSize:
+                                                              isSmallScreen
+                                                                  ? 20
+                                                                  : 24,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                ],
                                               ),
                                             ),
                                           ),
@@ -216,7 +282,9 @@ class GameScreen extends StatelessWidget {
                                               gameProvider.currentLevel !=
                                                   GameLevel.level5 &&
                                               gameProvider.currentLevel !=
-                                                  GameLevel.level6)
+                                                  GameLevel.level6 &&
+                                              gameProvider.currentLevel !=
+                                                  GameLevel.level7)
                                             Padding(
                                               padding: const EdgeInsets.only(
                                                 top: 8.0,
@@ -238,11 +306,17 @@ class GameScreen extends StatelessWidget {
                                                       ),
                                                     ),
                                                   if (gameProvider
-                                                          .currentLetter
-                                                          .numericValue >
-                                                      0)
+                                                              .currentHebrewCategory ==
+                                                          HebrewCategory
+                                                              .consonants &&
+                                                      gameProvider.currentLetter
+                                                          is HebrewLetter &&
+                                                      (gameProvider.currentLetter
+                                                                  as HebrewLetter)
+                                                              .numericValue >
+                                                          0)
                                                     Text(
-                                                      'Valor: ${gameProvider.currentLetter.numericValue}',
+                                                      'Valor: ${(gameProvider.currentLetter as HebrewLetter).numericValue}',
                                                       style: TextStyle(
                                                         fontSize:
                                                             isSmallScreen
@@ -285,14 +359,22 @@ class GameScreen extends StatelessWidget {
                                         ),
                                       ),
                                     ),
-                                    if (gameProvider.currentLetter.isGuttural ||
-                                        gameProvider
-                                            .currentLetter
-                                            .isBegadkephat ||
-                                        gameProvider
-                                            .currentLetter
-                                            .finalForm
-                                            .isNotEmpty)
+                                    if (gameProvider.currentHebrewCategory ==
+                                                HebrewCategory.consonants &&
+                                            gameProvider.currentLetter
+                                                is HebrewLetter &&
+                                            ((gameProvider.currentLetter
+                                                        as HebrewLetter)
+                                                    .isGuttural ||
+                                                (gameProvider.currentLetter
+                                                        as HebrewLetter)
+                                                    .isBegadkephat ||
+                                                (gameProvider.currentLetter
+                                                        as HebrewLetter)
+                                                    .finalForm
+                                                    .isNotEmpty) ||
+                                        gameProvider.currentHebrewCategory ==
+                                            HebrewCategory.vowels)
                                       Positioned(
                                         left: 10,
                                         bottom: 10,
@@ -315,42 +397,97 @@ class GameScreen extends StatelessWidget {
                                                             MainAxisSize.min,
                                                         children: [
                                                           if (gameProvider
-                                                              .currentLetter
-                                                              .isGuttural)
-                                                            const Padding(
-                                                              padding:
-                                                                  EdgeInsets.only(
-                                                                    bottom: 8.0,
-                                                                  ),
-                                                              child: Text(
-                                                                '• Letra gutural',
+                                                                  .currentHebrewCategory ==
+                                                              HebrewCategory
+                                                                  .consonants) ...[
+                                                            if (gameProvider
+                                                                        .currentLetter
+                                                                    is HebrewLetter &&
+                                                                (gameProvider
+                                                                            .currentLetter
+                                                                        as HebrewLetter)
+                                                                    .isGuttural)
+                                                              const Padding(
+                                                                padding:
+                                                                    EdgeInsets.only(
+                                                                      bottom:
+                                                                          8.0,
+                                                                    ),
+                                                                child: Text(
+                                                                  '• Letra gutural',
+                                                                ),
                                                               ),
-                                                            ),
-                                                          if (gameProvider
-                                                              .currentLetter
-                                                              .isBegadkephat)
-                                                            const Padding(
-                                                              padding:
-                                                                  EdgeInsets.only(
-                                                                    bottom: 8.0,
-                                                                  ),
-                                                              child: Text(
-                                                                '• Letra begadkephat (puede llevar dagesh)',
+                                                            if (gameProvider
+                                                                        .currentLetter
+                                                                    is HebrewLetter &&
+                                                                (gameProvider
+                                                                            .currentLetter
+                                                                        as HebrewLetter)
+                                                                    .isBegadkephat)
+                                                              const Padding(
+                                                                padding:
+                                                                    EdgeInsets.only(
+                                                                      bottom:
+                                                                          8.0,
+                                                                    ),
+                                                                child: Text(
+                                                                  '• Letra begadkephat (puede llevar dagesh)',
+                                                                ),
                                                               ),
-                                                            ),
-                                                          if (gameProvider
-                                                              .currentLetter
-                                                              .finalForm
-                                                              .isNotEmpty)
+                                                            if (gameProvider
+                                                                        .currentLetter
+                                                                    is HebrewLetter &&
+                                                                (gameProvider
+                                                                            .currentLetter
+                                                                        as HebrewLetter)
+                                                                    .finalForm
+                                                                    .isNotEmpty)
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets.only(
+                                                                      bottom:
+                                                                          8.0,
+                                                                    ),
+                                                                child: Text(
+                                                                  '• Forma final: ${(gameProvider.currentLetter as HebrewLetter).finalForm}',
+                                                                ),
+                                                              ),
+                                                          ] else if (gameProvider
+                                                                  .currentHebrewCategory ==
+                                                              HebrewCategory
+                                                                  .vowels) ...[
                                                             Padding(
                                                               padding:
                                                                   const EdgeInsets.only(
                                                                     bottom: 8.0,
                                                                   ),
                                                               child: Text(
-                                                                '• Forma final: ${gameProvider.currentLetter.finalForm}',
+                                                                '• Tipo: ${_getVowelTypeText(gameProvider.currentLetter)}',
                                                               ),
                                                             ),
+                                                            if (gameProvider
+                                                                .currentLetter
+                                                                .isCompoundShewa)
+                                                              const Padding(
+                                                                padding:
+                                                                    EdgeInsets.only(
+                                                                      bottom:
+                                                                          8.0,
+                                                                    ),
+                                                                child: Text(
+                                                                  '• Shewá compuesto',
+                                                                ),
+                                                              ),
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets.only(
+                                                                    bottom: 8.0,
+                                                                  ),
+                                                              child: Text(
+                                                                '• Ejemplo: בּ${gameProvider.currentLetter.symbol}',
+                                                              ),
+                                                            ),
+                                                          ],
                                                           if (gameProvider
                                                               .currentLetter
                                                               .notes
@@ -452,7 +589,15 @@ class GameScreen extends StatelessWidget {
                                                       gameProvider
                                                               .currentLevel ==
                                                           GameLevel.level6)
-                                                  ? (isSmallScreen ? 75 : 95)
+                                                  ? (gameProvider
+                                                              .currentHebrewCategory ==
+                                                          HebrewCategory.vowels
+                                                      ? (isSmallScreen
+                                                          ? 120
+                                                          : 140)
+                                                      : (isSmallScreen
+                                                          ? 75
+                                                          : 95))
                                                   : (isSmallScreen ? 65 : 85),
                                         ),
                                     itemCount: 4,
@@ -751,5 +896,16 @@ class GameScreen extends StatelessWidget {
         ),
       ),
     ];
+  }
+
+  String _getVowelTypeText(dynamic vowel) {
+    if (vowel.type == VowelType.long) {
+      return 'Vocal larga';
+    } else if (vowel.type == VowelType.short) {
+      return 'Vocal corta';
+    } else if (vowel.type == VowelType.semiVowel) {
+      return 'Semivocal';
+    }
+    return '';
   }
 }

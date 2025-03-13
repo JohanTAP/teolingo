@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/language_provider.dart';
 import 'subscription_screen.dart';
-import 'level_selection_screen.dart';
 import 'language_selection_screen.dart';
+import 'category_selection_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -83,7 +83,7 @@ class HomeScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const LevelSelectionScreen(),
+                          builder: (context) => const CategorySelectionScreen(),
                         ),
                       );
                     },
