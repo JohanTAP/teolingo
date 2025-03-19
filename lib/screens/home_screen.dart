@@ -110,7 +110,7 @@ class HomeScreen extends StatelessWidget {
                   SizedBox(height: isSmallScreen ? 20 : 30),
                   _buildMainButton(
                     context,
-                    'Cambiar Idioma',
+                    'Cambiar',
                     Icons.language,
                     Colors.purple,
                     () {

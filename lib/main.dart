@@ -6,6 +6,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'providers/game_provider.dart';
 import 'providers/language_provider.dart';
+import 'providers/bible_course_provider.dart';
 import 'screens/language_selection_screen.dart';
 
 void main() async {
@@ -39,12 +40,15 @@ class MyApp extends StatelessWidget {
               create: (context) => GameProvider(),
               update: (context, languageProvider, previousGameProvider) {
                 if (previousGameProvider != null) {
-                  previousGameProvider.setLanguage(languageProvider.currentLanguage);
+                  previousGameProvider.setLanguage(
+                    languageProvider.currentLanguage,
+                  );
                   return previousGameProvider;
                 }
                 return GameProvider();
               },
             ),
+            ChangeNotifierProvider(create: (context) => BibleCourseProvider()),
           ],
           child: MaterialApp(
             title: 'Teolingo',
