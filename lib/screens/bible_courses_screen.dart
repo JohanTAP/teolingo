@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 import '../models/bible_lesson.dart';
+import '../providers/bible_course_provider.dart';
 import 'bible_lessons_screen.dart';
 
 class BibleCoursesScreen extends StatelessWidget {
@@ -13,6 +15,9 @@ class BibleCoursesScreen extends StatelessWidget {
     final bool isSmallScreen =
         screenSize.width < 360 || screenSize.height < 600;
     final bool isLargeScreen = screenSize.width > 600;
+
+    // Acceder al provider para obtener información sobre el progreso
+    final provider = Provider.of<BibleCourseProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -110,12 +115,37 @@ class BibleCoursesScreen extends StatelessWidget {
                       ) {
                         final index = entry.key;
                         final course = entry.value;
+
+                        // Calcular el progreso del curso
+                        int completedLessonsCount = 0;
+                        for (int i = 0; i < course.lessons.length; i++) {
+                          if (provider.isLessonCompleted(index, i)) {
+                            completedLessonsCount++;
+                          }
+                        }
+
+                        final double courseProgress =
+                            course.lessons.isNotEmpty
+                                ? completedLessonsCount / course.lessons.length
+                                : 0.0;
+
+                        // Comprobar si el curso está en progreso o completado
+                        final bool isInProgress =
+                            completedLessonsCount > 0 &&
+                            completedLessonsCount < course.lessons.length;
+                        final bool isCompleted =
+                            completedLessonsCount == course.lessons.length &&
+                            course.lessons.isNotEmpty;
+
                         return _buildCourseCard(
                           context,
                           index,
                           course,
                           isSmallScreen,
                           isLargeScreen,
+                          courseProgress,
+                          isInProgress,
+                          isCompleted,
                         );
                       }),
 
@@ -166,7 +196,25 @@ class BibleCoursesScreen extends StatelessWidget {
     BiblicalCourse course,
     bool isSmallScreen,
     bool isLargeScreen,
+    double courseProgress,
+    bool isInProgress,
+    bool isCompleted,
   ) {
+    // Definir colores e iconos según el estado del curso
+    Color statusColor = Colors.blue.shade700;
+    IconData statusIcon = Icons.play_arrow;
+    String statusText = 'Comenzar';
+
+    if (isCompleted) {
+      statusColor = Colors.green.shade700;
+      statusIcon = Icons.check_circle;
+      statusText = 'Completado';
+    } else if (isInProgress) {
+      statusColor = Colors.orange.shade700;
+      statusIcon = Icons.access_time;
+      statusText = 'En progreso';
+    }
+
     return Card(
       elevation: 8,
       margin: const EdgeInsets.only(bottom: 16),
@@ -230,65 +278,130 @@ class BibleCoursesScreen extends StatelessWidget {
                           ],
                         ),
                       ),
+                      Container(
+                        width: 28,
+                        height: 28,
+                        decoration: BoxDecoration(
+                          color: Colors.indigo.shade100,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.arrow_forward_ios,
+                          color: Colors.indigo.shade800,
+                          size: 14,
+                        ),
+                      ),
                     ],
                   ),
-                  const SizedBox(height: 16),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 8,
-                      horizontal: 12,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.blue.shade50,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
+
+                  if (isInProgress || isCompleted) ...[
+                    const SizedBox(height: 12),
+                    // Indicador de progreso
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(
-                          Icons.list_alt,
-                          size: isSmallScreen ? 16 : 20,
-                          color: Colors.blue.shade700,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Progreso:',
+                              style: TextStyle(
+                                fontSize: isSmallScreen ? 13 : 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey.shade700,
+                              ),
+                            ),
+                            Text(
+                              '${(courseProgress * 100).toInt()}%',
+                              style: TextStyle(
+                                fontSize: isSmallScreen ? 13 : 14,
+                                fontWeight: FontWeight.bold,
+                                color: statusColor,
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 8),
-                        Text(
-                          '${course.lessons.length} lecciones',
-                          style: TextStyle(
-                            color: Colors.blue.shade700,
-                            fontWeight: FontWeight.bold,
-                            fontSize: isSmallScreen ? 14 : 16,
+                        const SizedBox(height: 4),
+                        LinearProgressIndicator(
+                          value: courseProgress,
+                          backgroundColor: Colors.grey.shade200,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            statusColor,
                           ),
+                          minHeight: 6,
+                          borderRadius: BorderRadius.circular(3),
                         ),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Toca para comenzar',
-                    style: TextStyle(
-                      fontSize: isSmallScreen ? 12 : 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.indigo.shade800,
-                    ),
+                  ],
+
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 8,
+                          horizontal: 12,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.shade50,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.list_alt,
+                              size: isSmallScreen ? 16 : 20,
+                              color: Colors.blue.shade700,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              '${course.lessons.length} lecciones',
+                              style: TextStyle(
+                                color: Colors.blue.shade700,
+                                fontWeight: FontWeight.bold,
+                                fontSize: isSmallScreen ? 14 : 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // Indicador de estado
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 8,
+                          horizontal: 12,
+                        ),
+                        decoration: BoxDecoration(
+                          color: statusColor.withAlpha(25),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              statusIcon,
+                              size: isSmallScreen ? 16 : 20,
+                              color: statusColor,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              statusText,
+                              style: TextStyle(
+                                color: statusColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: isSmallScreen ? 14 : 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ],
-              ),
-            ),
-            Positioned(
-              right: 12,
-              bottom: 12,
-              child: Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: Colors.indigo.shade800.withAlpha(25),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.arrow_forward,
-                  color: Colors.indigo.shade800,
-                  size: 20,
-                ),
               ),
             ),
           ],

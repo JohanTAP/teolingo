@@ -93,6 +93,31 @@ class _BibleQuestionScreenState extends State<BibleQuestionScreen>
           'Bienaventurado el que lee, y los que oyen las palabras de esta profecía, y guardan las cosas en ella escritas; porque el tiempo está cerca.',
       'Juan 5:39':
           'Escudriñad las Escrituras; porque a vosotros os parece que en ellas tenéis la vida eterna; y ellas son las que dan testimonio de mí.',
+      // Versículos para la lección 2: DIOS
+      'Efesios 4:6':
+          'Un solo Dios y Padre de todos, el cual es sobre todos, y por todos, y en todos.',
+      'Juan 4:24':
+          'Dios es Espíritu; y los que le adoran, en espíritu y en verdad es necesario que adoren.',
+      'Mateo 28:19':
+          'Por tanto, id, y haced discípulos a todas las naciones, bautizándolos en el nombre del Padre, y del Hijo, y del Espíritu Santo.',
+      '1 Juan 4:8':
+          'El que no ama, no ha conocido a Dios; porque Dios es amor.',
+      '1 Juan 3:1, 2':
+          'Mirad cuál amor nos ha dado el Padre, para que seamos llamados hijos de Dios; por esto el mundo no nos conoce, porque no le conoció a él. Amados, ahora somos hijos de Dios, y aún no se ha manifestado lo que hemos de ser; pero sabemos que cuando él se manifieste, seremos semejantes a él, porque le veremos tal como él es.',
+      'Salmos 40:1-3':
+          'Pacientemente esperé a Jehová, y se inclinó a mí, y oyó mi clamor. Y me hizo sacar del pozo de la desesperación, del lodo cenagoso; puso mis pies sobre peña, y enderezó mis pasos. Puso luego en mi boca cántico nuevo, alabanza a nuestro Dios. Verán esto muchos, y temerán, y confiarán en Jehová.',
+      'Juan 3:16':
+          'Porque de tal manera amó Dios al mundo, que ha dado a su Hijo unigénito, para que todo aquel que en él cree, no se pierda, mas tenga vida eterna.',
+      '1 Juan 4:9, 10':
+          'En esto se mostró el amor de Dios para con nosotros, en que Dios envió a su Hijo unigénito al mundo, para que vivamos por él. En esto consiste el amor: no en que nosotros hayamos amado a Dios, sino en que él nos amó a nosotros, y envió a su Hijo en propiciación por nuestros pecados.',
+      'Éxodo 20:7':
+          'No tomarás el nombre de Jehová tu Dios en vano; porque no dará por inocente Jehová al que tomare su nombre en vano.',
+      'Hechos 5:29':
+          'Respondiendo Pedro y los apóstoles, dijeron: Es necesario obedecer a Dios antes que a los hombres.',
+      'Mateo 6:33':
+          'Mas buscad primeramente el reino de Dios y su justicia, y todas estas cosas os serán añadidas.',
+      'Mateo 22:37':
+          'Jesús le dijo: Amarás al Señor tu Dios con todo tu corazón, y con toda tu alma, y con toda tu mente.',
       // Versículos para preguntas verdadero/falso
       'Mateo 4:4':
           'Él respondió y dijo: Escrito está: No sólo de pan vivirá el hombre, sino de toda palabra que sale de la boca de Dios.',
@@ -179,6 +204,38 @@ class _BibleQuestionScreenState extends State<BibleQuestionScreen>
     // Función para verificar si todos los puntos están marcados
     bool allChecked() => checkPoint1 && checkPoint2 && checkPoint3;
 
+    // Obtener el provider para determinar la lección actual
+    final provider = Provider.of<BibleCourseProvider>(context, listen: false);
+
+    // Determinar los puntos de compromiso según la lección
+    List<String> commitmentPoints = [];
+
+    // Lección 1: REVELADA POR DIOS
+    if (provider.currentCourseIndex == 0 && provider.currentLessonIndex == 0) {
+      commitmentPoints = [
+        'Creo que la Santa Biblia es revelada por Dios.',
+        'La acepto como regla de fe.',
+        'Decido leerla diariamente.',
+      ];
+    }
+    // Lección 2: DIOS
+    else if (provider.currentCourseIndex == 0 &&
+        provider.currentLessonIndex == 1) {
+      commitmentPoints = [
+        'Creo en Dios el Padre, el Hijo y el Espíritu Santo.',
+        'Decido amarlo y obedecerle como mi Padre celestial.',
+        'Pondré a Dios en primer lugar en mi vida.',
+      ];
+    }
+    // Para otras lecciones (valor por defecto)
+    else {
+      commitmentPoints = [
+        'Acepto estas enseñanzas bíblicas.',
+        'Deseo aplicarlas en mi vida diaria.',
+        'Continuaré aprendiendo más sobre la Biblia.',
+      ];
+    }
+
     showDialog(
       context: context,
       barrierDismissible: false, // Impedir cerrar tocando fuera del diálogo
@@ -231,7 +288,7 @@ class _BibleQuestionScreenState extends State<BibleQuestionScreen>
                         });
                       },
                       title: Text(
-                        'Creo que la Santa Biblia es revelada por Dios.',
+                        commitmentPoints[0],
                         style: TextStyle(
                           color: Colors.indigo.shade700,
                           fontSize: 15,
@@ -253,7 +310,7 @@ class _BibleQuestionScreenState extends State<BibleQuestionScreen>
                         });
                       },
                       title: Text(
-                        'La acepto como regla de fe.',
+                        commitmentPoints[1],
                         style: TextStyle(
                           color: Colors.indigo.shade700,
                           fontSize: 15,
@@ -275,7 +332,7 @@ class _BibleQuestionScreenState extends State<BibleQuestionScreen>
                         });
                       },
                       title: Text(
-                        'Decido leerla diariamente.',
+                        commitmentPoints[2],
                         style: TextStyle(
                           color: Colors.indigo.shade700,
                           fontSize: 15,

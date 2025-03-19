@@ -171,6 +171,100 @@ class BiblicalCoursesData {
             ),
           ],
         ),
+        BibleLesson(
+          title: 'DIOS',
+          description: 'Conociendo la naturaleza y el carácter de Dios',
+          questions: [
+            BibleQuestion(
+              question: '¿Cuántos dioses hay?',
+              options: ['Tres', 'Uno', 'Ninguno', 'No sé'],
+              correctOptionIndex: 1,
+              bibleReference: 'Efesios 4:6',
+            ),
+            BibleQuestion(
+              question: '¿Cuál es la naturaleza de Dios?',
+              options: ['Sin materia', 'Carnal', 'Espiritual', 'No sé'],
+              correctOptionIndex: 2,
+              bibleReference: 'Juan 4:24',
+            ),
+            BibleQuestion(
+              question: '¿Cuáles son las tres personas de la Deidad?',
+              options: [
+                'Padre, Hijo, Espíritu',
+                'Padre, Madre, Hijo',
+                'Padre e Hijo',
+                'No sé',
+              ],
+              correctOptionIndex: 0,
+              bibleReference: 'Mateo 28:19',
+            ),
+            BibleQuestion(
+              question: '¿Cómo es el carácter de Dios?',
+              options: ['Firme, tirano', 'Amor', 'Indiferente', 'No sé'],
+              correctOptionIndex: 1,
+              bibleReference: '1 Juan 4:8',
+            ),
+            BibleQuestion(
+              question:
+                  '¿Cómo considera Dios al ser humano? ¿Qué siente al respecto?',
+              options: [
+                'Con indiferencia',
+                'Como enemigos',
+                'Como sus hijos, con amor paternal',
+                'Como siervos solamente',
+              ],
+              correctOptionIndex: 2,
+              bibleReference: '1 Juan 3:1, 2',
+            ),
+            BibleQuestion(
+              question: 'Dios ¿se preocupa por nuestros problemas?',
+              options: [
+                'No, estamos solos',
+                'Sí, escucha nuestro clamor y nos ayuda',
+                'Solo se preocupa por cosas importantes',
+                'No tiene tiempo para todos',
+              ],
+              correctOptionIndex: 1,
+              bibleReference: 'Salmos 40:1-3',
+            ),
+            BibleQuestion(
+              question:
+                  '¿De qué manera el ser humano puede percibir el amor de Dios?',
+              options: [
+                'A través de la naturaleza solamente',
+                'En el envío de su Hijo para salvarnos',
+                'En las bendiciones materiales',
+                'No es posible percibirlo',
+              ],
+              correctOptionIndex: 1,
+              bibleReference: 'Juan 3:16; 1 Juan 4:9, 10',
+            ),
+            BibleQuestion(
+              question: 'Debemos respetar el nombre de Dios',
+              options: ['Verdadero', 'Falso'],
+              correctOptionIndex: 0,
+              bibleReference: 'Éxodo 20:7',
+            ),
+            BibleQuestion(
+              question: 'Debemos obedecer a Dios',
+              options: ['Verdadero', 'Falso'],
+              correctOptionIndex: 0,
+              bibleReference: 'Hechos 5:29',
+            ),
+            BibleQuestion(
+              question: 'Debemos poner a Dios en primer lugar',
+              options: ['Verdadero', 'Falso'],
+              correctOptionIndex: 0,
+              bibleReference: 'Mateo 6:33',
+            ),
+            BibleQuestion(
+              question: 'Debemos amar a Dios de todo corazón',
+              options: ['Verdadero', 'Falso'],
+              correctOptionIndex: 0,
+              bibleReference: 'Mateo 22:37',
+            ),
+          ],
+        ),
       ],
     ),
   ];
